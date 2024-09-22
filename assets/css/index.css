@@ -53,6 +53,11 @@ body {
 }
 
 
+.pmtl-nav-summary-date-eachyear {
+    cursor: pointer;
+}
+
+
 .pmtl-timeline-data-match-map-link {
     color: var(--bs-body-color);
     cursor: pointer;

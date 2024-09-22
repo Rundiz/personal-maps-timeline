@@ -7,13 +7,7 @@ class TimelinePanel {
 
 
     /**
-     * @type {string} Google Maps search URL based.
-     */
-    #googleMapsSearchURLBased = 'https://www.google.com/maps/search/?api=1';
-
-
-    /**
-     * @var LibMaps
+     * @type {LibMaps}
      */
     #LibMaps;
 
@@ -78,20 +72,6 @@ class TimelinePanel {
             return Promise.resolve(response);
         });
     }// #ajaxGetTimelineData
-
-
-    /**
-     * Close timeline panel.
-     */
-    #closeTimelinePanel() {
-        const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
-        const timelinePanel = document.getElementById(this.#timelinePanelId);
-        selectDateMenuLink.classList.remove('active');
-        timelinePanel?.classList?.remove('show');
-        timelinePanel.style = '';
-        // clear loaded map layers.
-        this.#LibMaps.clearMapLayers();
-    }// #closeTimelinePanel
 
 
     /**
@@ -278,8 +258,19 @@ class TimelinePanel {
             selectDateMenuLink.addEventListener('click', (event) => {
                 event.preventDefault();
                 if (selectDateMenuLink.classList.contains('active')) {
-                    this.#closeTimelinePanel();
+                    // if timeline panal is already opened.
+                    this.closeTimelinePanel();
                 } else {
+                    // if timeline panel is not opened.
+                    // clear all actived items.
+                    const navbarNav = document.querySelector('.navbar-nav');
+                    const activedItems = navbarNav?.querySelectorAll('.active');
+                    if (activedItems) {
+                        activedItems.forEach((item) => {
+                            item.classList.remove('active');
+                        });
+                    }
+
                     selectDateMenuLink.classList.add('active');
                     timelinePanel?.classList?.add('show');
                     this.#openPanelLoadTimelineData();
@@ -299,7 +290,7 @@ class TimelinePanel {
 
         if (timelinePanelCloseBtn) {
             timelinePanelCloseBtn.addEventListener('click', () => {
-                this.#closeTimelinePanel();
+                this.closeTimelinePanel();
             });
         }
 
@@ -472,6 +463,20 @@ class TimelinePanel {
             timelineDateInput.dispatchEvent(event);
         }
     }// #openPanelLoadTimelineData
+
+
+    /**
+     * Close timeline panel.
+     */
+    closeTimelinePanel() {
+        const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
+        const timelinePanel = document.getElementById(this.#timelinePanelId);
+        selectDateMenuLink.classList.remove('active');
+        timelinePanel?.classList?.remove('show');
+        timelinePanel.style = '';
+        // clear loaded map layers.
+        this.#LibMaps.clearMapLayers();
+    }// closeTimelinePanel
 
 
     /**

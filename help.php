@@ -18,7 +18,7 @@ include 'HTTP/common/html-head.php';
         <div class="container-fluid">
             <div class="row">
                 <div class="col">
-                    <h1><?php echo $htmlTitle; ?></h1>
+                    <h1 class="display-3"><?php echo $htmlTitle; ?></h1>
                     <h3>Export Google Maps timeline</h3>
                     <p>Follow this instruction on <a href="https://support.google.com/maps/thread/264641290/export-full-location-timeline-data-in-json-or-similar-format-in-the-new-version-of-timeline?hl=en" target="google-support">Google support page</a>.</p>
 

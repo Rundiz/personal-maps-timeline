@@ -268,7 +268,7 @@ class LibMaps {
             item.remove();
         }
 
-        if (typeof(this.#timelineLayerGroup) === 'object') {
+        if (typeof(this.#timelineLayerGroup) === 'object' && this.#timelineLayerGroup !== null) {
             this.#timelineLayerGroup.clearLayers();
             this.#timelineLayerGroup = null;
         }
@@ -333,7 +333,7 @@ class LibMaps {
                 this.#drawTimelinePaths(timelinePaths, timelinePathsTimes, timelinePathsSegmentsMatchData);
                 ++drawn;
             }// endif; there is timeline paths.
-            
+
             // ending, draw them to the map.
             if (drawn > 0) {
                 this.#timelineLayerGroup.addTo(this.#map);
@@ -342,6 +342,52 @@ class LibMaps {
             }
         }
     }// drawTimelineData
+
+
+    drawYearSummary(visitedPlacesYear) {
+        if (visitedPlacesYear?.items) {
+            this.#timelineLayerGroup = L.featureGroup([]);
+            let drawn = 0;
+
+            visitedPlacesYear.items.forEach((item, index) => {
+                const latLngArray = MapsUtil.convertLatLngString(item.topCandidate_placeLocation_latLng);
+                const googleMapsURL = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','), item?.topCandidate_placeId);
+                const googleMapsURLNoPlaceId = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','));
+                const circleMarker = L.circleMarker(latLngArray, {
+                    color: '#f5f9ff',
+                    fillColor: '#3388ff',
+                    fillOpacity: 0.7,
+                    radius: 6,
+                    stroke: true,
+                    weight: 2,
+                })
+                .bindPopup(
+                    '<p>'
+                    + '<strong>' + item.topCandidate_placeLocation_latLng + '</strong>'
+                    + (item.startTime ? '<br>Latest on ' + item.startTime : '')
+                    + '</p>'
+                    + '<div class="additional-content-placeholder"></div>'
+                    + '<div class="view-on-google-maps-links">'
+                    + '<small><a href="' + googleMapsURL + '" target="googlemaps">View on Google Maps</a></small>'
+                    + ' <small><a href="' + googleMapsURLNoPlaceId + '" target="googlemaps" title="View by latitude, longitude only"><i class="fa-solid fa-map-pin"></i></a></small>'
+                    + '</div>',
+                    {
+                        className: 'map-marker-popup',
+                    }
+                );
+                ++drawn;
+                this.#timelineLayerGroup.addLayer(circleMarker);
+                this.#timelineItems[item.id + '-' + String(index)] = circleMarker;
+            });
+
+            // ending, draw them to the map.
+            if (drawn > 0) {
+                this.#timelineLayerGroup.addTo(this.#map);
+                this.#map.invalidateSize(true);
+                this.#map.fitBounds(this.#timelineLayerGroup.getBounds());
+            }
+        }
+    }// drawYearSummary
 
 
     /**
