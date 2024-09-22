@@ -1,0 +1,11 @@
+{
+    "name": "vee/google-timeline",
+    "require": {
+        "php": ">= 7.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "PMTL\\": "."
+        }
+    }
+}

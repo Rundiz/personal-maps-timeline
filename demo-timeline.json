@@ -1,0 +1,173 @@
+{
+    "semanticSegments": [
+        {
+            "startTime": "2021-10-03T15:00:00.000+07:00",
+            "endTime": "2021-10-03T17:00:00.000+07:00",
+            "timelinePath": [
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-03T15:52:00.000+07:00"
+                }
+            ]
+        },
+        {
+            "startTime": "2021-10-04T13:00:00.000+07:00",
+            "endTime": "2021-10-04T15:00:00.000+07:00",
+            "timelinePath": [
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:26:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:28:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:30:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:32:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:34:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:50:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:52:00.000+07:00"
+                },
+                {
+                    "point": "lat, lng",
+                    "time": "2021-10-04T14:56:00.000+07:00"
+                }
+            ]
+        },
+        {
+            "startTime": "2021-10-04T14:25:34.000+07:00",
+            "endTime": "2021-10-04T14:33:40.000+07:00",
+            "startTimeTimezoneUtcOffsetMinutes": 420,
+            "endTimeTimezoneUtcOffsetMinutes": 420,
+            "activity": {
+                "start": {
+                    "latLng": "lat, lng"
+                },
+                "end": {
+                    "latLng": "lat, lng"
+                },
+                "distanceMeters": 2389.0,
+                "topCandidate": {
+                    "type": "IN_PASSENGER_VEHICLE",
+                    "probability": 0.0
+                }
+            }
+        },
+        {
+            "startTime": "2021-10-04T14:33:40.000+07:00",
+            "endTime": "2021-10-04T14:49:54.000+07:00",
+            "startTimeTimezoneUtcOffsetMinutes": 420,
+            "endTimeTimezoneUtcOffsetMinutes": 420,
+            "visit": {
+                "hierarchyLevel": 0,
+                "probability": 0.9300000071525574,
+                "topCandidate": {
+                    "placeId": "place id",
+                    "semanticType": "UNKNOWN",
+                    "probability": 0.7281762957572937,
+                    "placeLocation": {
+                        "latLng": "lat, lng"
+                    }
+                }
+            }
+        },
+        {
+            "startTime": "2021-10-04T14:33:40.000+07:00",
+            "endTime": "2021-10-04T14:49:54.000+07:00",
+            "startTimeTimezoneUtcOffsetMinutes": 420,
+            "endTimeTimezoneUtcOffsetMinutes": 420,
+            "visit": {
+                "hierarchyLevel": 1,
+                "probability": 0.9300000071525574,
+                "topCandidate": {
+                    "placeId": "place id",
+                    "semanticType": "UNKNOWN",
+                    "probability": 0.5537304282188416,
+                    "placeLocation": {
+                        "latLng": "lat, lng"
+                    }
+                }
+            }
+        },
+        {
+            "startTime": "2021-10-04T14:49:54.000+07:00",
+            "endTime": "2021-10-04T15:02:02.000+07:00",
+            "startTimeTimezoneUtcOffsetMinutes": 420,
+            "endTimeTimezoneUtcOffsetMinutes": 420,
+            "activity": {
+                "start": {
+                    "latLng": "lat, lng"
+                },
+                "end": {
+                    "latLng": "lat, lng"
+                },
+                "distanceMeters": 1984.0,
+                "topCandidate": {
+                    "type": "IN_PASSENGER_VEHICLE",
+                    "probability": 0.0
+                }
+            }
+        },
+        {
+          "startTime": "2024-06-05T15:10:39.000+07:00",
+          "endTime": "2024-06-06T05:42:25.000+07:00",
+          "startTimeTimezoneUtcOffsetMinutes": 420,
+          "endTimeTimezoneUtcOffsetMinutes": 420,
+          "visit": {
+            "hierarchyLevel": 0,
+            "probability": 0.5759474039077759,
+            "topCandidate": {
+              "placeId": "place id",
+              "semanticType": "HOME",
+              "probability": 0.9622267484664917,
+              "placeLocation": {
+                "latLng": "lat, lng"
+              }
+            },
+            "isTimelessVisit": false
+          }
+        },
+        {
+          "startTime": "2021-12-25T23:12:41.000+07:00",
+          "endTime": "2022-01-10T18:26:22.000+07:00",
+          "startTimeTimezoneUtcOffsetMinutes": 420,
+          "endTimeTimezoneUtcOffsetMinutes": 420,
+          "timelineMemory": {
+            "trip": {
+              "distanceFromOriginKms": 145,
+              "destinations": [
+                {
+                  "identifier": {
+                    "placeId": "place id"
+                  }
+                },
+                {
+                  "identifier": {
+                    "placeId": "place id"
+                  }
+                },
+                {
+                  "identifier": {
+                    "placeId": "place id"
+                  }
+                }
+              ]
+            }
+          }
+        }
+    ]
+}

@@ -1,4 +1,4 @@
-# Personal Maps timeline
+# Personal maps timeline
 
 ภาษาไทย
 
