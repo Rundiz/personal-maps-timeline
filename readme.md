@@ -9,6 +9,8 @@
 2. สร้างฐานข้อมูลบน MariaDB, MySQL แล้วนำเข้าไฟล์ mariadb-structure.sql.
 3. คัดลอกไฟล์ default.config.php ไปเป็นไฟล์ config.php แล้วแก้ไขตั้งค่าต่างๆ.
 
+---
+
 English (translated by Google Translate)
 
 Show Google Timeline on your computer.
