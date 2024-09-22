@@ -2,7 +2,7 @@
 
 ภาษาไทย
 
-แสดงไทม์ไลน์ของ Google บนเครื่องคอมพิวเตอร์ของคุณ. ดูวีดีโอตัวอย่างที่ https://youtu.be/xOfx7KnBgS8
+แสดงไทม์ไลน์ของ Google บนเครื่องคอมพิวเตอร์ของคุณ. ดูวีดีโอตัวอย่างที่ https://youtu.be/345UmtRfIDU
 
 ## ติดตั้ง
 1. Download แล้วแตกไฟล์ออกบนตำแหน่งที่สามารถเรียกใช้ผ่าน web server และ PHP ได้.
@@ -14,7 +14,7 @@
 
 English (translated by Google Translate)
 
-Show Google Timeline on your computer. Watch the sample video at https://youtu.be/xOfx7KnBgS8
+Show Google Timeline on your computer. Watch the sample video at https://youtu.be/345UmtRfIDU
 
 ## Installation
 1. Download and extract the file to a location where it can be accessed via web server and PHP.
