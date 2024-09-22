@@ -79,6 +79,7 @@ if (empty($errorMessage)) {
     FROM `latest_date` 
     INNER JOIN `visit` ON `visit`.`segment_id` = `latest_date`.`id`
     WHERE `ld` = 1 
+    GROUP BY `latest_date`.`id`
     ORDER BY `startTime` DESC
     LIMIT 10 OFFSET 0';
     $Sth = $dbh->prepare($sql);
