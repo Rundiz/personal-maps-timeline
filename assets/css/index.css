@@ -25,6 +25,12 @@ body {
 }
 
 
+/* .fade is override Bootstrap default. */
+.fade {
+    transition: opacity .08s linear;
+}
+
+
 .map-marker-popup .additional-content-placeholder {
     margin-bottom: 10px;
 }

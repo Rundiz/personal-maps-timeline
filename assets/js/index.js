@@ -191,7 +191,12 @@ class Index {
                         modalBody.insertAdjacentHTML('beforeend', response?.result?.htmlForm);
                     });
                 }
-            });
+            });// end event listener show.bs.modal
+
+            // make rendered form auto focus.
+            bsModal.addEventListener('shown.bs.modal', () => {
+                bsModal.querySelector('#place_name')?.focus();
+            });// end event listener shown.bs.modal
         }
     }// #listenClickEditPlaceName
 

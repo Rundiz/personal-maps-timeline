@@ -15,7 +15,7 @@ class MapsUtil {
     /**
      * Build Google Maps search URL.
      * 
-     * @link https://developers.google.com/maps/documentation/urls/get-started?hl=th Google Maps URL structure document.
+     * @link https://developers.google.com/maps/documentation/urls/get-started Google Maps URL structure document.
      * @param {string} query The search query. It can be latitude, longitude.
      * @param {string} query_place_id The Google Maps's place ID. (optional.)
      */
