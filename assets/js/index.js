@@ -50,7 +50,8 @@ class Index {
                 + 'Since: '
                 + response.recordDates.sinceYear + ' - ' + response.recordDates.latestDate
                 + '</a>'
-                + '<ul class="dropdown-menu">';
+                + '<ul class="dropdown-menu">'
+                + '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="*">All</a></li>';
                 for (let i = response.recordDates.sinceYear; i <= response.recordDates.latestYear; ++i) {
                     summaryDateHTML += '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="' + i + '">' + i + '</a></li>';
                 }
@@ -119,7 +120,7 @@ class Index {
         this.#LibMaps = new LibMaps();
         this.#setupDefaultMap();
 
-        this.#TimelinePanel = new TimelinePanel(this.#LibMaps);
+        this.#TimelinePanel = new TimelinePanel(this.#LibMaps, this);
         this.#TimelinePanel.init();
 
         this.#listenClickOutsideCloseNavMenu();
@@ -144,20 +145,21 @@ class Index {
                 this.#TimelinePanel.closeTimelinePanel();
 
                 // un-active all dropdown items.
-                document.querySelectorAll('.pmtl-nav-summary-date-eachyear').forEach((item) => {
-                    item.classList.remove('active');
-                });
-                // mark current item as active
-                thisTarget.classList.add('active');
-                // mark parent navbar item as active
-                const navItem = thisTarget.closest('.nav-item');
-                const navItemLink = navItem?.querySelector('.nav-link');
-                if (navItemLink) {
-                    navItemLink?.classList?.add('active');
-                }
+                this.clearAllActiveNavItems();
 
-                this.#ajaxGetSummaryByYear(thisTarget.dataset.year);
-            }
+                if (!isNaN(thisTarget.dataset.year)) {
+                    // mark current item as active
+                    thisTarget.classList.add('active');
+                    // mark parent navbar item as active
+                    const navItem = thisTarget.closest('.nav-item');
+                    const navItemLink = navItem?.querySelector('.nav-link');
+                    if (navItemLink) {
+                        navItemLink?.classList?.add('active');
+                    }
+
+                    this.#ajaxGetSummaryByYear(thisTarget.dataset.year);
+                }// endif; selected year is number.
+            }// endif; there is a class.
         });
     }// #listenClickNavSummaryDateDropdown
 
@@ -204,6 +206,20 @@ class Index {
     #setupDefaultMap() {
         this.#LibMaps.setupDefaultMap(this.#ajaxLoaded.summaryVisitedPlaces);
     }// #setupDefaultMap
+
+
+    /**
+     * Clear all actived navbar items.
+     */
+    clearAllActiveNavItems() {
+        const navbarNav = document.querySelector('.navbar-nav');
+        const activedItems = navbarNav?.querySelectorAll('.active');
+        if (activedItems) {
+            activedItems.forEach((item) => {
+                item.classList.remove('active');
+            });
+        }
+    }// clearAllActiveNavItems
 
 
 }// Index

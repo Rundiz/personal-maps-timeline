@@ -344,6 +344,11 @@ class LibMaps {
     }// drawTimelineData
 
 
+    /**
+     * Draw visited places summary by a selected year.
+     * 
+     * @param {object} visitedPlacesYear 
+     */
     drawYearSummary(visitedPlacesYear) {
         if (visitedPlacesYear?.items) {
             this.#timelineLayerGroup = L.featureGroup([]);

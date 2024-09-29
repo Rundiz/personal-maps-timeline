@@ -7,6 +7,12 @@ class TimelinePanel {
 
 
     /**
+     * @type {Index}
+     */
+    #Index;
+
+
+    /**
      * @type {LibMaps}
      */
     #LibMaps;
@@ -47,9 +53,12 @@ class TimelinePanel {
      * 
      * @param {LibMaps} LibMaps 
      */
-    constructor(LibMaps) {
+    constructor(LibMaps, Index) {
         if (typeof(LibMaps) === 'object') {
             this.#LibMaps = LibMaps;
+        }
+        if (typeof(Index) === 'object') {
+            this.#Index = Index;
         }
     }// constructor
 
@@ -262,14 +271,8 @@ class TimelinePanel {
                     this.closeTimelinePanel();
                 } else {
                     // if timeline panel is not opened.
-                    // clear all actived items.
-                    const navbarNav = document.querySelector('.navbar-nav');
-                    const activedItems = navbarNav?.querySelectorAll('.active');
-                    if (activedItems) {
-                        activedItems.forEach((item) => {
-                            item.classList.remove('active');
-                        });
-                    }
+                    // clear all actived items on navmenu.
+                    this.#Index.clearAllActiveNavItems();
 
                     selectDateMenuLink.classList.add('active');
                     timelinePanel?.classList?.add('show');
