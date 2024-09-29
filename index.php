@@ -72,6 +72,20 @@ $navbarExpand = 'md';
                     </div>
                 </div>
             </div><!-- #pmtl-timeline-panel -->
+            <div id="pmtl-bs-modal" class="modal fade" tabindex="-1" aria-labelledby="pmtl-bs-modal-title" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 id="pmtl-bs-modal-title" class="modal-title"></h5>
+                            <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p id="pmtl-bs-modal-loading"><i class="fa-solid fa-spinner fa-spin-pulse"></i> Loading &hellip;</p>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- #pmtl-bs-modal -->
+
         </div><!-- .pmtl-contents -->
 
         <script>

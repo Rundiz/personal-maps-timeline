@@ -52,6 +52,7 @@ class TimelinePanel {
      * Timeline panel constructor.
      * 
      * @param {LibMaps} LibMaps 
+     * @param {Index} Index 
      */
     constructor(LibMaps, Index) {
         if (typeof(LibMaps) === 'object') {
@@ -136,7 +137,9 @@ class TimelinePanel {
                     [startTime, endTime] = getStartEndDateTime(item);
 
                     listResult += '<li id="segment-id-' + item.id + '-' + String(index) + '" class="is-visit">'
-                        + '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + '" data-segment-id="' + item.id + '-' + String(index) + '">' + item.visit.topCandidate_placeLocation_latLng + '</a></h6>'
+                        + '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + ' place-title-placement place-id-' + item?.visit?.topCandidate_placeId + '" data-segment-id="' + item.id + '-' + String(index) + '">' 
+                            + (item?.visit?.place_name ?? item.visit.topCandidate_placeLocation_latLng) 
+                        + '</a></h6>'
                         + (
                             (startTime !== '' || endTime !== '' ? '<div class="text-secondary">' : '')
                             + (startTime === '' && endTime !== '' ? '<i class="fa-solid fa-arrow-right" title="Continue from previous day"></i> ' : '')
@@ -151,7 +154,9 @@ class TimelinePanel {
                         let subVisitResult = '<ul class="sub-visit-list">';
                         item.visit.subVisits.forEach((eachSubV) => {
                             subVisitResult += '<li id="segment-id-' + item.id + '-' + String(index) + '-' + eachSubV.visit_id + '" class="is-visit">'
-                            subVisitResult += '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + '" data-segment-id="' + item.id + '-' + String(index) + '">' + eachSubV.topCandidate_placeLocation_latLng + '</a></h6>'
+                            subVisitResult += '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + ' place-title-placement place-id-' + eachSubV?.topCandidate_placeId + '" data-segment-id="' + item.id + '-' + String(index) + '">' 
+                                + (eachSubV?.place_name ?? eachSubV.topCandidate_placeLocation_latLng) 
+                            + '</a></h6>'
                             const latLngArray = MapsUtil.convertLatLngString(eachSubV.topCandidate_placeLocation_latLng);
                             const googleMapsURL = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','), eachSubV.topCandidate_placeId);
                             const googleMapsURLNoPlaceId = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','));
@@ -342,10 +347,10 @@ class TimelinePanel {
          * @returns 
          */
         function delay(fn, ms) {
-            let timer = 0
+            let timer = 0;
             return function (...args) {
-                clearTimeout(timer)
-                timer = setTimeout(fn.bind(this, ...args), ms || 0)
+                clearTimeout(timer);
+                timer = setTimeout(fn.bind(this, ...args), ms || 0);
             }
         }// delay
 

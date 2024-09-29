@@ -83,6 +83,7 @@ if (empty($errorMessage)) {
         `visit`.`topCandidate_probability` AS `visit_topCandidate_probability`,
         `visit`.`topCandidate_placeLocation_latLng` AS `visit_topCandidate_placeLocation_latLng`,
         `visit`.`isTimelessVisit` AS `visit_isTimelessVisit`,
+        `google_places`.`place_name` AS `visit_place_name`,
         `tlp`.`tlp_id`,
         `tlp`.`segment_id` AS `tlp_segment_id`,
         `tlp`.`point` AS `tlp_point`,
@@ -91,6 +92,7 @@ if (empty($errorMessage)) {
     LEFT JOIN `activity` ON `segments`.`id` = `activity`.`segment_id`
     LEFT JOIN `visit` ON `segments`.`id` = `visit`.`segment_id`
     LEFT JOIN `timelinepath` AS `tlp` ON `segments`.`id` = `tlp`.`segment_id`
+    LEFT JOIN `google_places` ON `visit`.`topCandidate_placeId` = `google_places`.`place_id`
     WHERE (
         (DATE(`startTime`) = :date)
         OR (DATE(`startTime`) < :date AND DATE(`endTime`) >= :date)

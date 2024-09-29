@@ -131,7 +131,8 @@ class LibMaps {
         const marker = L.marker(latLngArray, defaultMarkerStyle)
         .bindPopup(
             '<p data-segment-id="' + item.id + '-' + String(index) + '">'
-            + '<strong>' + item.visit.topCandidate_placeLocation_latLng + '</strong>'
+            + '<strong class="place-title-placement place-id-' + item?.visit?.topCandidate_placeId + '">' + (item?.visit?.place_name ?? item.visit.topCandidate_placeLocation_latLng) + '</strong>'
+            + this.#getEditPlaceNameHTML(item?.visit?.topCandidate_placeId)
             + (startTime !== '' ? 
                 '<br>On ' + startTime 
                     + (endTime !== '' ? ' - ' + endTime : '')
@@ -181,6 +182,21 @@ class LibMaps {
         window.dispatchEvent(event);
         document.dispatchEvent(event);
     }// #fireEventDefaultMapLoaded
+
+
+    /**
+     * Get edit place name HTML.
+     * 
+     * @param {String} placeId
+     * @returns {String}
+     */
+    #getEditPlaceNameHTML(placeId) {
+        if (typeof(placeId) !== 'string' || '' === placeId.trim()) {
+            return '';
+        }
+
+        return ' <a class="pmtl-edit-placename" title="Edit place name" data-place-id="' + placeId + '" data-bs-toggle="modal" data-bs-target="#pmtl-bs-modal"><i class="fa-solid fa-pen"></i></a>';
+    }// #getEditPlaceNameHTML
 
 
     /**
@@ -251,7 +267,7 @@ class LibMaps {
                         });
                         additionalContentPlaceholder?.insertAdjacentHTML('beforeend', visitedPlaceHTML);
                     }
-                })
+                });
             }
         });
     }// #listenMapPopupOpen
@@ -368,7 +384,8 @@ class LibMaps {
                 })
                 .bindPopup(
                     '<p>'
-                    + '<strong>' + item.topCandidate_placeLocation_latLng + '</strong>'
+                    + '<strong class="place-title-placement place-id-' + item?.topCandidate_placeId + '">' + (item?.place_name ?? item.topCandidate_placeLocation_latLng) + '</strong>'
+                    + this.#getEditPlaceNameHTML(item?.topCandidate_placeId)
                     + (item.startTime ? '<br>Latest on ' + item.startTime : '')
                     + '</p>'
                     + '<div class="additional-content-placeholder"></div>'
@@ -426,7 +443,7 @@ class LibMaps {
     /**
      * Setup default map.
      * 
-     * @summaryVisitedPlaces object The ajax result of summary visited places. This object must contain `items` property to display markers.
+     * @param {object} summaryVisitedPlaces The ajax result of summary visited places. This object must contain `items` property to display markers.
      * @returns null|void
      */
     setupDefaultMap(summaryVisitedPlaces = {}) {
@@ -492,7 +509,8 @@ class LibMaps {
                 })
                 .bindPopup(
                     '<p>'
-                    + '<strong>' + item.topCandidate_placeLocation_latLng + '</strong>'
+                    + '<strong class="place-title-placement place-id-' + item?.topCandidate_placeId + '">' + (item?.place_name ?? item.topCandidate_placeLocation_latLng) + '</strong>'
+                    + this.#getEditPlaceNameHTML(item?.topCandidate_placeId)
                     + (item.startTime ? '<br>Latest on ' + item.startTime : '')
                     + '</p>'
                     + '<div class="additional-content-placeholder"></div>'
@@ -505,7 +523,7 @@ class LibMaps {
                     }
                 )
                 .addTo(this.#map);
-            })
+            });
         }// endif;
         // end display summary visited places. --------------------------
 

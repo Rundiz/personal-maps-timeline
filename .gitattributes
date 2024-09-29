@@ -40,3 +40,4 @@
 *.woff2 binary
 # End line ending normalization. ----------------------
 # Export ignore folders, files.
+.dev-notes export-ignore

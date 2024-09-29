@@ -1,0 +1,8 @@
+# Development notes.
+
+## Create migration.
+* Use command `phinx create NewMigrationName` on the app's root.  
+* Go to db/migrations folder to edit latest created new .php file.
+
+## Run DB migrations.
+* Use one of these commands (`composer update` or `phinx migrate`).

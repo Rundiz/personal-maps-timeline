@@ -69,9 +69,11 @@ $sql = 'WITH `latest_location` AS (
     FROM `visit` AS `v`
 )
 SELECT `semanticsegments`.`id`, `semanticsegments`.`startTime`, 
-    `latest_location`.`visit_id`, `latest_location`.`topCandidate_placeId`, `latest_location`.`topCandidate_placeLocation_latLng`
+    `latest_location`.`visit_id`, `latest_location`.`topCandidate_placeId`, `latest_location`.`topCandidate_placeLocation_latLng`,
+    `google_places`.`place_name`
 FROM `latest_location` 
 INNER JOIN `semanticsegments` ON `latest_location`.`segment_id` = `semanticsegments`.`id`
+LEFT JOIN `google_places` ON `latest_location`.`topCandidate_placeId` = `google_places`.`place_id`
 WHERE `ll` = 1 
 ORDER BY `visit_id` ASC';
 $Sth = $dbh->prepare($sql);

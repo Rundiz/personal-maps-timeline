@@ -33,6 +33,21 @@ class Index {
 
 
     /**
+     * AJAX get edit place name form and its data.
+     * 
+     * @private This method was called from `#listenClickEditPlaceName()`.
+     * @param {string} placeId 
+     * @returns {Promise}
+     */
+    #ajaxGetEditPlaceNameForm(placeId) {
+        return Ajax.fetchGet(appBasePath + '/HTTP/edit-placename-form.php?placeId=' + encodeURIComponent(placeId))
+        .then((response) => {
+            return Promise.resolve(response);
+        });
+    }// #ajaxGetEditPlaceNameForm
+
+
+    /**
      * AJAX get summary.
      * 
      * @private This method was called from `#init()`.
@@ -123,9 +138,62 @@ class Index {
         this.#TimelinePanel = new TimelinePanel(this.#LibMaps, this);
         this.#TimelinePanel.init();
 
+        this.#listenClickEditPlaceName();
+        this.#listenFormSubmitEditPlaceName();
+
         this.#listenClickOutsideCloseNavMenu();
         this.#listenClickNavSummaryDateDropdown();
     }// #init
+
+
+    /**
+     * Listen on click edit place name.
+     * 
+     * @private This method was called from `#init()`.
+     */
+    #listenClickEditPlaceName() {
+        const bsModal = document.getElementById('pmtl-bs-modal');
+        const loadingP = document.getElementById('pmtl-bs-modal-loading');
+        if (loadingP) {
+            loadingP.classList.remove('d-none');
+        }
+
+        if (bsModal) {
+            bsModal.addEventListener('show.bs.modal', (event) => {
+                // Button that triggered the modal
+                const button = event.relatedTarget;
+                if (button?.dataset?.placeId) {
+                    const modalBody = bsModal.querySelector('.modal-body');
+                    const modalTitle = bsModal.querySelector('.modal-title');
+                    modalTitle.textContent = 'Edit place name';
+
+                    const nodes = modalBody.childNodes;
+                    // remove everything except loading element. ----------------------
+                    // remove element nodes first.
+                    nodes.forEach((elm) => {
+                        if (elm.nodeType === Node.ELEMENT_NODE && elm.id !== 'pmtl-bs-modal-loading') {
+                            elm.remove();
+                        }
+                    });
+                    // then remove non-element nodes.
+                    nodes.forEach((elm) => {
+                        if (elm.nodeType !== Node.ELEMENT_NODE) {
+                            elm.parentNode.removeChild(elm)
+                        }
+                    });
+                    // end remove everything except loading element. ------------------
+
+                    // AJAX get edit place name form and its data.
+                    this.#ajaxGetEditPlaceNameForm(button.dataset.placeId)
+                    .then((response) => {
+                        loadingP.classList.add('d-none');
+
+                        modalBody.insertAdjacentHTML('beforeend', response?.result?.htmlForm);
+                    });
+                }
+            });
+        }
+    }// #listenClickEditPlaceName
 
 
     /**
@@ -196,6 +264,47 @@ class Index {
             this.#ajaxLoaded.summaryVisitedPlaces = null;
         });
     }// #listenDefaultMapLoaded
+
+
+    /**
+     * Listen form submit on edit place name form and make AJAX save.
+     * 
+     * @private This method was called from `#init()`.
+     * @returns {undefined}
+     */
+    #listenFormSubmitEditPlaceName() {
+        document.addEventListener('submit', (event) => {
+            let thisTarget = event.target;
+            if (thisTarget.getAttribute('id') === 'pmtl-edit-place-name-form') {
+                event.preventDefault();
+
+                const formData = new FormData();
+                const placeIdInput = thisTarget.querySelector('#place_id');
+                const placeNameInput = thisTarget.querySelector('#place_name');
+                formData.set('place_id', placeIdInput?.value);
+                formData.set('place_name', placeNameInput?.value);
+
+                const fetchOptions = {
+                    'body': new URLSearchParams(formData),
+                    'content-type': 'application/x-www-form-urlencoded',
+                };
+                const bsModal = document.getElementById('pmtl-bs-modal');
+
+                Ajax.fetchPost(appBasePath + '/HTTP/edit-placename-save.php', fetchOptions)
+                .then((response) => {
+                    if (response?.result?.success && response.result.success === true) {
+                        // if succeeded.
+                        document.querySelectorAll('.place-title-placement.place-id-' + placeIdInput?.value)?.forEach((item) => {
+                            item.innerText = placeNameInput?.value;
+                        });
+                        bsModal.querySelector('.btn-close')?.click();
+                    } else {
+                        // if failed.
+                    }
+                });
+            }
+        });
+    }// #listenFormSubmitEditPlaceName
 
 
     /**
