@@ -59,7 +59,7 @@ if (empty($errorMessage)) {
     <div class="mb-3 row">
         <label for="place_name" class="col-sm-2 col-form-label">Place name</label>
         <div class="col-sm-10">
-            <input id="place_name" class="form-control" type="text" name="place_name" value="' . htmlspecialchars($place_name, ENT_QUOTES) . '" maxlength="190">
+            <input id="place_name" class="form-control" type="text" name="place_name" value="' . $place_name . '" maxlength="190">
         </div>
     </div>
     <div class="mb-3 row">
