@@ -24,6 +24,9 @@ $jsonFile = null;// set to `null` to use all files.
 // Google Maps place API (new) config.
 define('GOOGLE_MAPS_API_KEY', '');
 
+// set your timezone (refer from https://www.php.net/manual/en/timezones.php ).
+date_default_timezone_set('Asia/Bangkok');
+
 
 // ==================================================================
 // Do not edit line below this.

@@ -39,12 +39,13 @@ if (!empty($errorMessage)) {
 
 if (empty($errorMessage)) {
     // if there is no errors.
-    $sql = 'INSERT INTO `google_places`  (`place_id`, `place_name`) VALUES (:place_id, :place_name)
+    $sql = 'INSERT INTO `google_places`  (`place_id`, `place_name`, `last_update`) VALUES (:place_id, :place_name, :last_update)
         ON DUPLICATE KEY UPDATE `place_name` = :place_name';
     $Sth = $dbh->prepare($sql);
     unset($sql);
     $Sth->bindValue(':place_id', $place_id);
     $Sth->bindValue(':place_name', $place_name);
+    $Sth->bindValue(':last_update', date('Y-m-d H:i:s'));
     $Sth->execute();
     $insertId = $dbh->lastInsertId();
     $Sth->closeCursor();
