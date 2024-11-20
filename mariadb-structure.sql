@@ -3,11 +3,10 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 29, 2024 at 01:19 PM
+-- Generation Time: Nov 21, 2024 at 01:10 AM
 -- Server version: 11.3.2-MariaDB
--- PHP Version: 8.2.21
+-- PHP Version: 8.2.24
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -43,9 +42,25 @@ CREATE TABLE IF NOT EXISTS `activity` (
 --
 
 CREATE TABLE IF NOT EXISTS `google_places` (
-  `place_id` varchar(255) NOT NULL COMMENT 'refer to Google''s place ID.',
+  `place_id` varchar(255) NOT NULL,
   `place_name` varchar(255) DEFAULT NULL,
+  `last_update` datetime NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`place_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `phinxlog`
+--
+
+CREATE TABLE IF NOT EXISTS `phinxlog` (
+  `version` bigint(20) NOT NULL,
+  `migration_name` varchar(100) DEFAULT NULL,
+  `start_time` timestamp NULL DEFAULT NULL,
+  `end_time` timestamp NULL DEFAULT NULL,
+  `breakpoint` tinyint(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------

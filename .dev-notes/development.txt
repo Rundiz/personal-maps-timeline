@@ -6,3 +6,9 @@
 
 ## Run DB migrations.
 * Use one of these commands (`composer update` or `phinx migrate`).
+
+## phpMyAdmin export settings.
+* No export `Data`.
+* Set **Database system or older MySQL server to maximize output compatibility with:** to `TRADITIONAL`.
+* Enable **IF NOT EXISTS**.
+* Enable **Add CREATE PROCEDURE / FUNCTION / EVENT statement**.
