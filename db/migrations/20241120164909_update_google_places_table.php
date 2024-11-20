@@ -20,6 +20,6 @@ final class UpdateGooglePlacesTable extends AbstractMigration
     {
         $table = $this->table('google_places');
         $table->addColumn('last_update', 'datetime', ['default' => 'CURRENT_TIMESTAMP'])
-            ->save();
+            ->update();
     }
 }
