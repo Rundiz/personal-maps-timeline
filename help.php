@@ -33,6 +33,8 @@ include 'HTTP/common/html-head.php';
                         If you have to clear all data on DB before import, run a command
                         <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>clear-db.php&quot;</code>.
                     </p>
+                    <h4>Retrieve the place name</h4>
+                    <p>To retrieve the place name from Google Places, run a command <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>retrieve-place-detail.php&quot;</code>.</p>
 
                     <p><a href="./">Go back to Personal maps timeline page</a></p>
                 </div>
