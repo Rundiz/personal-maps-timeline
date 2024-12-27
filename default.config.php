@@ -21,7 +21,9 @@ define('DB_PASSWORD', '');
 $jsonFolder = '';// path to your folder that contain exported Google Maps timeline JSON files.
 $jsonFile = null;// set to `null` to use all files.
 
-// Google Maps place API (new) config.
+// Google Maps place API key.
+// This is for use with some features that require Google API such as retrieve place detail from Google Maps based on its place ID.
+// You can leave this empty.
 define('GOOGLE_MAPS_API_KEY', '');
 
 // set your timezone (refer from https://www.php.net/manual/en/timezones.php ).
