@@ -56,8 +56,13 @@ class Db
             \PDO::ATTR_STRINGIFY_FETCHES => true,
             \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
         ];
-        $this->PDO = new \PDO($dsn, DB_USERNAME, DB_PASSWORD, $options);
-        unset($dsn, $options);
+        try {
+            $this->PDO = new \PDO($dsn, DB_USERNAME, DB_PASSWORD, $options);
+            unset($dsn, $options);
+        } catch (\Exception $ex) {
+            throw $ex;
+            exit(1);
+        }
 
         return $this->PDO;
     }// connect

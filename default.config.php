@@ -26,8 +26,15 @@ $jsonFile = null;// set to `null` to use all files.
 // You can leave this empty.
 define('GOOGLE_MAPS_API_KEY', '');
 
-// set your timezone (refer from https://www.php.net/manual/en/timezones.php ).
+// If you are making large numbers of request to Nominatim please include an appropriate email address. ( Read more at https://nominatim.org/release-docs/develop/api/Reverse/#other )
+define('NOMINATIM_EMAIL', '');
+
+// Set your timezone (refer from https://www.php.net/manual/en/timezones.php ).
 date_default_timezone_set('Asia/Bangkok');
+
+// Full path to Certificate Authority (CA) Info file (.pem).
+// If you have problem with SSL, then download .pem file from https://curl.se/docs/caextract.html and set the full path in this constant value.
+define('CAINFO_FILE', '');
 
 
 // ==================================================================

@@ -34,7 +34,7 @@ include 'HTTP/common/html-head.php';
                         <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>clear-db.php&quot;</code>.
                     </p>
                     <h4>Retrieve the place name</h4>
-                    <p>To retrieve the place name from Google Places, run a command <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>retrieve-place-detail.php&quot;</code>.</p>
+                    <p>To retrieve the place name from Google Places, run a command <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>retrieve-place-detail.php&quot; --help</code> to read more info.</p>
 
                     <p><a href="./">Go back to Personal maps timeline page</a></p>
                 </div>

@@ -16,7 +16,7 @@ $dbh = $Db->connect();
 
 
 set_time_limit(3000000);
-ini_set('memory_limit','2048M');
+ini_set('memory_limit', '2048M');
 
 
 $JSONFiles = new \PMTL\Libraries\JSONFiles($jsonFolder, $jsonFile);
