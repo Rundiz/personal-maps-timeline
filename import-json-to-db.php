@@ -324,12 +324,10 @@ function insertUpdateTimelineMemory(int $segment_id, $timelineMemory)
 
     // check data exists.
     $sql = 'SELECT `tmem_id`, `segment_id`, `trip_distanceFromOriginKms` FROM `timelinememory`
-        WHERE `segment_id` = :segment_id
-        AND `trip_distanceFromOriginKms` = :trip_distanceFromOriginKms';
+        WHERE `segment_id` = :segment_id';
     $Sth = $dbh->prepare($sql);
     unset($sql);
     $Sth->bindValue(':segment_id', $segment_id, \PDO::PARAM_INT);
-    $Sth->bindValue(':trip_distanceFromOriginKms', ($timelineMemory->trip->distanceFromOriginKms ?? null));
     $Sth->execute();
     $row = $Sth->fetchObject();
     $Sth->closeCursor();
@@ -337,7 +335,7 @@ function insertUpdateTimelineMemory(int $segment_id, $timelineMemory)
     if (!$row) {
         $tmem_id = false;
     } else {
-        $tmem_id = $row->tmem_id;
+        $tmem_id = intval($row->tmem_id);
     }
     unset($row);
     // end check data exists.
@@ -352,10 +350,26 @@ function insertUpdateTimelineMemory(int $segment_id, $timelineMemory)
         $Sth->bindValue(':trip_distanceFromOriginKms', ($timelineMemory->trip->distanceFromOriginKms ?? null));
         $Sth->execute();
         $tmem_id = $dbh->lastInsertId();
+        if (false !== $tmem_id) {
+            $tmem_id = intval($tmem_id);
+        }
         $Sth->closeCursor();
         unset($Sth);
 
         ++$totalInsertTLM;
+    } else {
+        // if data exists.
+        $sql = 'UPDATE `timelinememory` SET `trip_distanceFromOriginKms` = :trip_distanceFromOriginKms
+            WHERE `tmem_id` = :tmem_id';
+        $Sth = $dbh->prepare($sql);
+        unset($sql);
+        $Sth->bindValue(':tmem_id', $tmem_id, \PDO::PARAM_INT);
+        $Sth->bindValue(':trip_distanceFromOriginKms', ($timelineMemory->trip->distanceFromOriginKms ?? null));
+        $Sth->execute();
+        $Sth->closeCursor();
+        unset($Sth);
+
+        ++$totalUpdateTLM;
     }
 
     if (isset($timelineMemory->trip->destinations) && is_array($timelineMemory->trip->destinations)) {
@@ -576,14 +590,9 @@ function isSegmentExists($segment)
         FROM `semanticsegments` 
         WHERE `startTime` = :startTime
         AND `endTime` = :endTime';
-    /*$sql .= '
-        AND `startTimeTimezoneUtcOffsetMinutes` = :startTimeTimezoneUtcOffsetMinutes
-        AND `endTimeTimezoneUtcOffsetMinutes` = :endTimeTimezoneUtcOffsetMinutes';*/
     $Sth = $dbh->prepare($sql);
     $Sth->bindValue(':startTime', $startDt->format('Y-m-d H:i:s'));
     $Sth->bindValue(':endTime', $endDt->format('Y-m-d H:i:s'));
-    /*$Sth->bindValue(':startTimeTimezoneUtcOffsetMinutes', ($segment->startTimeTimezoneUtcOffsetMinutes ?? null));
-    $Sth->bindValue(':endTimeTimezoneUtcOffsetMinutes', ($segment->endTimeTimezoneUtcOffsetMinutes ?? null));*/
     $Sth->execute();
     $row = $Sth->fetchObject();
     $Sth->closeCursor();
