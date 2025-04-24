@@ -85,7 +85,7 @@ class Index {
                 let summaryDateHTML = '<li class="nav-item">'
                 + '<span class="nav-link navbar-text">'
                 + 'Total visits: '
-                + response.totalVisit.unique
+                + '<span id="pmtl-nav-total-visit" data-total-value="' + response.totalVisit.unique + '">' + response.totalVisit.unique + '</span>'
                 + '</span>'
                 + '</li>';
                 navbarNav.insertAdjacentHTML('beforeend', summaryDateHTML);
@@ -121,6 +121,10 @@ class Index {
 
         return Ajax.fetchGet(appBasePath + '/HTTP/summary-by-year.php?year=' + encodeURIComponent(selectedYear))
         .then((response) => {
+            const navTotalVisitElement = document.getElementById('pmtl-nav-total-visit');
+            if (navTotalVisitElement) {
+                navTotalVisitElement.innerText = response?.visitedPlacesYear?.total;
+            }
             this.#LibMaps.drawYearSummary(response?.visitedPlacesYear);
             return Promise.resolve(response);
         })
@@ -218,13 +222,21 @@ class Index {
                 thisTarget = thisTarget.closest('.pmtl-nav-summary-date-eachyear');
                 event.preventDefault();
 
-                // close timeline panel (if opened)
+                // close timeline panel (if opened) and also clear timeline layer group (lot of markers from timeline panels).
                 this.#TimelinePanel.closeTimelinePanel();
 
                 // un-active all dropdown items.
                 this.clearAllActiveNavItems();
+                IndexJSObject.summaryDateSelectedYear = null;
+
+                // restore real total visit value on navbar.
+                const navTotalVisitElement = document.getElementById('pmtl-nav-total-visit');
+                if (navTotalVisitElement) {
+                    navTotalVisitElement.innerText = navTotalVisitElement.dataset.totalValue;
+                }
 
                 if (!isNaN(thisTarget.dataset.year)) {
+                    IndexJSObject.summaryDateSelectedYear = thisTarget.dataset.year;
                     // mark current item as active
                     thisTarget.classList.add('active');
                     // mark parent navbar item as active

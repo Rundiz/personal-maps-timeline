@@ -77,7 +77,7 @@ class TimelinePanel {
 
         return Ajax.fetchGet(appBasePath + '/HTTP/timeline-by-date.php?date=' + encodeURIComponent(selectedDate))
         .then((response) => {
-            loadSelectedDate = selectedDate;
+            IndexJSObject.loadSelectedDate = selectedDate;
             this.#LibMaps.drawTimelineData(response);
             this.#displayTimelineData(response);
             return Promise.resolve(response);
@@ -377,7 +377,7 @@ class TimelinePanel {
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' && event?.target?.getAttribute('id') === this.#timelineDateInputId) {
                 event.preventDefault();
-                if (timelineDateInput.value !== loadSelectedDate) {
+                if (timelineDateInput.value !== IndexJSObject.loadSelectedDate) {
                     // if not yet loaded.
                     // make ajax call to get timeline data.
                     this.#ajaxGetTimelineData(timelineDateInput.value);
@@ -487,7 +487,7 @@ class TimelinePanel {
      * This method was called from `#listenClickOpenTimelinePanel()`.
      */
     #openPanelLoadTimelineData() {
-        if (false !== loadSelectedDate) {
+        if (false !== IndexJSObject.loadSelectedDate) {
             return null;
         }
 
@@ -504,7 +504,7 @@ class TimelinePanel {
 
 
     /**
-     * Close timeline panel.
+     * Close timeline panel and also clear timeline layer group.
      * 
      * This method must be able to call from outside this class.
      */
@@ -514,8 +514,8 @@ class TimelinePanel {
         selectDateMenuLink.classList.remove('active');
         timelinePanel?.classList?.remove('show');
         timelinePanel.style = '';
-        // clear loaded map layers.
-        this.#LibMaps.clearMapLayers();
+        // clear loaded map layer group.
+        this.#LibMaps.clearMapTimelineLayerGroup();
     }// closeTimelinePanel
 
 

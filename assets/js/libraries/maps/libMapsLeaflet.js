@@ -11,9 +11,21 @@ class LibMaps {
 
 
     /**
-     * @type {Object} Leaflet map object.
+     * @type {L.control.layers} Leaflet layer control from `L.control.layers`.
+     */
+    #layerControl = {};
+
+
+    /**
+     * @type {L.map} Leaflet map object.
      */
     #map = {};
+
+
+    /**
+     * @type {L.layerGroup} Leaflet layer group for paths traveled from `L.layerGroup()`.
+     */
+    #pathsTraveledLayerGroup = {};
 
 
     /**
@@ -169,7 +181,7 @@ class LibMaps {
      * This method was called from `setupDefaultMap()`.
      */
     #fireEventDefaultMapLoaded() {
-        if (true === defaultMapsLoaded) {
+        if (true === IndexJSObject.defaultMapsLoaded) {
             return null;
         }
 
@@ -178,7 +190,7 @@ class LibMaps {
         // @link https://stackoverflow.com/a/56695852/128761 remove loading text.
         pmtlMap.childNodes.forEach(c => c.nodeType === Node.TEXT_NODE && c.remove());
         // mark default maps was loaded. so it will be ready to work on timeline detail for each day.
-        defaultMapsLoaded = true;
+        IndexJSObject.defaultMapsLoaded = true;
 
         const event = new Event('pmtl.default.maps.loaded');
         window.dispatchEvent(event);
@@ -247,18 +259,23 @@ class LibMaps {
 
 
     /**
-     * Listen map popup open.
+     * Listen map popup open and display years visited. This means user clicked on marker of summary places (gray dots).
      * 
      * This method was called from `setupDefaultMap()`.
      */
-    #listenMapPopupOpen() {
+    #listenMapPopupOpenDisplayYearsVisited() {
         this.#map.addEventListener('popupopen', (event) => {
+            const additionalContentPlaceholder = event.popup?.getElement()?.querySelector('.additional-content-placeholder');
+            if (!additionalContentPlaceholder) {
+                // if not found any additional content placeholder that will be use for display Years visited.
+                // no need to work here to reduce AJAX call.
+                return ;
+            }
+
             const popupLatLng = event.popup?.getLatLng();
             if (popupLatLng && popupLatLng.lat && popupLatLng.lng) {
-                const additionalContentPlaceholder = event.popup?.getElement()?.querySelector('.additional-content-placeholder');
-                if (additionalContentPlaceholder) {
-                    additionalContentPlaceholder.innerHTML = '';
-                }
+                // if there is popup latitude & langitude.
+                additionalContentPlaceholder.innerHTML = '';
 
                 Ajax.fetchGet('HTTP/summary-visit-details.php?lat=' + encodeURIComponent(popupLatLng.lat) + '&lng=' + encodeURIComponent(popupLatLng.lng))
                 .then((response) => {
@@ -274,15 +291,17 @@ class LibMaps {
                 });
             }
         });
-    }// #listenMapPopupOpen
+    }// #listenMapPopupOpenDisplayYearsVisited
 
 
     /**
      * Clear map layers and mark load selected date to `false`.
      * 
-     * @param {Boolean} unmarkLoadSelectedDate Set to `true` to unmark `loadSelectedDate` variable. Set to `false` to untouch.
+     * This method was called from `drawTimelineData()`, `TimelinePanel.closeTimelinePanel()`.
+     * 
+     * @param {Boolean} unmarkLoadSelectedDate Set to `true` to unmark `IndexJSObject.loadSelectedDate` variable. Set to `false` to untouch.
      */
-    clearMapLayers(unmarkLoadSelectedDate = true) {
+    clearMapTimelineLayerGroup(unmarkLoadSelectedDate = true) {
         for (const [key, item] of Object.entries(this.#timelineItems)) {
             item.closePopup();
             item.remove();
@@ -295,10 +314,10 @@ class LibMaps {
 
         this.#timelineItems = {};
         if (true === unmarkLoadSelectedDate) {
-            loadSelectedDate = false;
+            IndexJSObject.loadSelectedDate = false;
         }
         this.#map.invalidateSize(true);
-    }// clearMapLayers
+    }// clearMapTimelineLayerGroup
 
 
     /**
@@ -312,7 +331,7 @@ class LibMaps {
         if (typeof(this.#timelineLayerGroup) === 'object' && this.#timelineLayerGroup !== null) {
             // if there is layergroup object.
             // just clear layers to remove previous loaded date.
-            this.clearMapLayers(false);
+            this.clearMapTimelineLayerGroup(false);
         }
 
         if (dbResult?.result?.items) {
@@ -459,7 +478,7 @@ class LibMaps {
      * @returns {null|undefined}
      */
     setupDefaultMap(summaryVisitedPlaces = {}) {
-        if (true === defaultMapsLoaded) {
+        if (true === IndexJSObject.defaultMapsLoaded) {
             return null;
         }
 
@@ -485,11 +504,14 @@ class LibMaps {
             this.#fireEventDefaultMapLoaded();
         });
 
+        this.#pathsTraveledLayerGroup = L.layerGroup([]);
+
         const baseLayer = {
             'OpenStreetMap': mapLayer,
             'Sattellite view': sattelliteLayer,
         };
-        const overlayLayer = {};
+        const overlayLayer = {
+        };
         // end set map layers. ------------------------------------------
 
         this.#map = L.map('pmtl-map', {
@@ -501,7 +523,7 @@ class LibMaps {
         L.control.zoom({
             position: 'topright',
         }).addTo(this.#map);
-        L.control.layers(baseLayer, overlayLayer, {
+        this.#layerControl = L.control.layers(baseLayer, overlayLayer, {
             sortLayers: true,
         }).addTo(this.#map);
 
@@ -539,7 +561,7 @@ class LibMaps {
         }// endif;
         // end display summary visited places. --------------------------
 
-        this.#listenMapPopupOpen();
+        this.#listenMapPopupOpenDisplayYearsVisited();
     }// setupDefaultMap
 
 

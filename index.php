@@ -90,8 +90,11 @@ $navbarExpand = 'md';
 
         <script>
             const appBasePath = '<?php echo $Url->getAppBasePath(); ?>';
-            let defaultMapsLoaded = false;
-            let loadSelectedDate = false;
+            let IndexJSObject = {
+                'defaultMapsLoaded': false,
+                'loadSelectedDate': false,
+                'summaryDateSelectedYear': null,// from summary date > dropdown > year selected.
+            };
         </script>
 <?php
 $customHTMLFoot = '<script src="' . $Url->getAppBasePath() . '/assets/vendor/leaflet/leaflet.js?v=1.9.4"></script>
