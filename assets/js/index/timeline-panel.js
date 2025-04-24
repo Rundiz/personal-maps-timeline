@@ -19,31 +19,31 @@ class TimelinePanel {
 
 
     /**
-     * @var {string} openTimelinePanelLinkId Open timeline panel link ID.
+     * @var {String} openTimelinePanelLinkId Open timeline panel link ID.
      */
     #openTimelinePanelLinkId = 'pmtl-open-timeline-panel';
 
 
     /**
-     * @var {string} #timelineDateInputId Timeline date input ID.
+     * @var {String} #timelineDateInputId Timeline date input ID.
      */
     #timelineDateInputId = 'pmtl-timeline-control-date-input';
 
 
     /**
-     * @var {string} #timelineItemLinkClass The timeline item link (action) class name.
+     * @var {String} #timelineItemLinkClass The timeline item link (action) class name.
      */
     #timelineItemLinkClass = 'pmtl-timeline-data-match-map-link';
 
 
     /**
-     * @var {string} #timelinePanelContentPlaceholderId Timeline content placeholder ID.
+     * @var {String} #timelinePanelContentPlaceholderId Timeline content placeholder ID.
      */
     #timelinePanelContentPlaceholderId = 'pmtl-timeline-panel-content-placeholder';
 
 
     /**
-     * @var {string} #timelinePanelId Timeline panel ID.
+     * @var {String} #timelinePanelId Timeline panel ID.
      */
     #timelinePanelId = 'pmtl-timeline-panel';
 
@@ -51,8 +51,8 @@ class TimelinePanel {
     /**
      * Timeline panel constructor.
      * 
-     * @param {LibMaps} LibMaps 
-     * @param {Index} Index 
+     * @param {LibMaps} LibMaps The `LibMaps` class.
+     * @param {Index} Index The `Index` class.
      */
     constructor(LibMaps, Index) {
         if (typeof(LibMaps) === 'object') {
@@ -67,8 +67,9 @@ class TimelinePanel {
     /**
      * AJAX get timeline data.
      * 
-     * @private This method was called from `#listenEventsOnDateInput()`.
-     * @param {string} selectedDate Selected date.
+     * This method was called from `#listenEventsOnDateInput()`.
+     * 
+     * @param {String} selectedDate Selected date.
      */
     #ajaxGetTimelineData(selectedDate) {
         const timelineContentPlaceholder = document.getElementById(this.#timelinePanelContentPlaceholderId);
@@ -85,9 +86,11 @@ class TimelinePanel {
 
 
     /**
-     * Display timeline data.
+     * Display timeline data. This will not draw anything on the maps. To draw data on the maps, use `LibMaps.drawTimelineData()`.
      * 
-     * @param {object} response 
+     * This method was called from `#ajaxGetTimelineData()`.
+     * 
+     * @param {Object} response 
      */
     #displayTimelineData(response) {
         const thisClass = this;
@@ -98,8 +101,8 @@ class TimelinePanel {
         /**
          * Get start and end date/time.
          * 
-         * @param {object} item 
-         * @returns {array}
+         * @param {Object} item 
+         * @returns {Array}
          */
         function getStartEndDateTime(item) {
             let startTime = '';
@@ -206,7 +209,7 @@ class TimelinePanel {
                             + '</li>';
                     }// endif; there is start or end time from timeline.
                 }// endif; `timelinepath` property.
-            });// end iteration response result.
+            });// endForeach; end iteration response result.
             listResult += '</ul>';
 
             if (false === hasResult) {
@@ -224,6 +227,8 @@ class TimelinePanel {
 
     /**
      * Listen on click next/previous date and set date after calculated then trigger enter.
+     * 
+     * This method was called from `init()`.
      */
     #listenClickNextPrevDate() {
         document.addEventListener('click', (event) => {
@@ -235,6 +240,11 @@ class TimelinePanel {
             const dateInput = document.getElementById(this.#timelineDateInputId);
             const dateInputDateObj = new Date(dateInput.value);
 
+            /**
+             * Trigger enter event on the input date.
+             * 
+             * @returns {undefined}
+             */
             function triggerEnterEvent() {
                 const event = new KeyboardEvent('keydown', {
                     bubbles: true,
@@ -263,6 +273,8 @@ class TimelinePanel {
 
     /**
      * Listen on click on select a date menu to show/hide timeline panel.
+     * 
+     * This method was called from `init()`.
      */
     #listenClickOpenTimelinePanel() {
         const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
@@ -290,6 +302,8 @@ class TimelinePanel {
 
     /**
      * Listen on click timeline panel control buttons.
+     * 
+     * This method was called from `init()`.
      */
     #listenClickPanelControlButtons() {
         const timelinePanel = document.getElementById(this.#timelinePanelId);
@@ -320,6 +334,8 @@ class TimelinePanel {
 
     /**
      * Listen click on timeline item and trigger click on the map.
+     * 
+     * This method was called from `init()`.
      */
     #listenClickTimelineItem() {
         document.addEventListener('click', (event) => {
@@ -336,14 +352,16 @@ class TimelinePanel {
 
     /**
      * Listen events on the date input and make ajax call to get timeline data for selected date.
+     * 
+     * This method was called from `init()`.
      */
     #listenEventsOnDateInput() {
         /**
          * Delay input.
          * 
          * @link https://stackoverflow.com/a/1909508/128761 Original source code.
-         * @param {callback} fn 
-         * @param {number} ms 
+         * @param {Callback} fn 
+         * @param {Number} ms 
          * @returns 
          */
         function delay(fn, ms) {
@@ -403,6 +421,8 @@ class TimelinePanel {
 
     /**
      * Listen on resize timeline panel and resize it.
+     * 
+     * This method was called from `init()`.
      */
     #listenResizeTimelinePanel() {
         const resizeEl = document.getElementById('pmtl-timeline-panel-resize');
@@ -410,6 +430,12 @@ class TimelinePanel {
         let myPos = 0;
         myPos = parseFloat(myPos);
 
+        /**
+         * Do resize the timeline panel.
+         * 
+         * @param {Object} event The event object.
+         * @returns {undefined}
+         */
         function resizePanel(event){
             let dy;
             if (typeof(event.touches) === 'object') {
@@ -422,6 +448,10 @@ class TimelinePanel {
             }
             const currentPanelHeight = parseInt(getComputedStyle(panel, '').height);
             panel.style.height = parseInt(currentPanelHeight + dy) + "px";
+            // set the `data-` for easy debugging.
+            panel.dataset.myPos = myPos;
+            panel.dataset.dy = dy;
+            panel.dataset.currentPanelHeight = currentPanelHeight;
         }// resizePanel
 
         // listen on resize for mobile.
@@ -454,7 +484,7 @@ class TimelinePanel {
     /**
      * Opened panel then load timeline data.
      * 
-     * @private This method was called from `#listenClickOpenTimelinePanel()`.
+     * This method was called from `#listenClickOpenTimelinePanel()`.
      */
     #openPanelLoadTimelineData() {
         if (false !== loadSelectedDate) {
@@ -475,6 +505,8 @@ class TimelinePanel {
 
     /**
      * Close timeline panel.
+     * 
+     * This method must be able to call from outside this class.
      */
     closeTimelinePanel() {
         const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
@@ -500,4 +532,4 @@ class TimelinePanel {
     }// init
 
 
-}
+}// TimelinePanel

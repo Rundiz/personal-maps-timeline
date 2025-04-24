@@ -11,19 +11,19 @@ class LibMaps {
 
 
     /**
-     * @type {object} Leaflet map object.
+     * @type {Object} Leaflet map object.
      */
     #map = {};
 
 
     /**
-     * @type {object} Timeline items such as marker, polyline path.
+     * @type {Object} Timeline items such as marker, polyline path.
      */
     #timelineItems = {};
 
 
     /**
-     * @type {object} Leaflet layer group object.
+     * @type {Object} Leaflet layer group object.
      */
     #timelineLayerGroup;
 
@@ -39,10 +39,11 @@ class LibMaps {
     /**
      * Draw timeline paths.
      * 
-     * @private This method was called from `drawTimelineData()`.
-     * @param {array} timelinePaths 
-     * @param {array} timelinePathsTimes 
-     * @param {array} timelinePathsSegmentsMatchData 
+     * This method was called from `drawTimelineData()`.
+     * 
+     * @param {Array} timelinePaths 
+     * @param {Array} timelinePathsTimes 
+     * @param {Array} timelinePathsSegmentsMatchData 
      */
     #drawTimelinePaths(timelinePaths, timelinePathsTimes, timelinePathsSegmentsMatchData) {
         const defaultPathStyle = {
@@ -96,9 +97,10 @@ class LibMaps {
     /**
      * Draw visit marker.
      * 
-     * @private This method was called from `drawTimelineData()`.
-     * @param {object} item 
-     * @param {number} index 
+     * This method was called from `drawTimelineData()`.
+     * 
+     * @param {Object} item A single DB result row data that should contains properties such as `visit`, `startTime`, etc.
+     * @param {Number} index The index number of DB results.
      */
     #drawVisitMarker(item, index) {
         const markerIcon = L.divIcon({
@@ -164,7 +166,7 @@ class LibMaps {
      * 
      * This will be fire once even user switch from map view to sattellite view.
      * 
-     * @private This method was called from `setupDefaultMap()`.
+     * This method was called from `setupDefaultMap()`.
      */
     #fireEventDefaultMapLoaded() {
         if (true === defaultMapsLoaded) {
@@ -185,10 +187,12 @@ class LibMaps {
 
 
     /**
-     * Get edit place name HTML.
+     * Get edit place name HTML link (link with an icon).
      * 
-     * @param {String} placeId
-     * @returns {String}
+     * This method was called from `drawYearSummary()`, `setupDefaultMap()`, `#drawVisitMarker()`.
+     * 
+     * @param {String} placeId The place ID from DB.
+     * @returns {String} Return HTML link with an icon.
      */
     #getEditPlaceNameHTML(placeId) {
         if (typeof(placeId) !== 'string' || '' === placeId.trim()) {
@@ -202,7 +206,7 @@ class LibMaps {
     /**
      * Listen click on year visited.
      * 
-     * @private This method was called from `constructor()`.
+     * This method was called from `constructor()`.
      */
     #listenClickYearVisited() {
         document.addEventListener('click', (event) => {
@@ -245,7 +249,7 @@ class LibMaps {
     /**
      * Listen map popup open.
      * 
-     * @private This method was called from `setupDefaultMap()`.
+     * This method was called from `setupDefaultMap()`.
      */
     #listenMapPopupOpen() {
         this.#map.addEventListener('popupopen', (event) => {
@@ -276,7 +280,7 @@ class LibMaps {
     /**
      * Clear map layers and mark load selected date to `false`.
      * 
-     * @param {boolean} unmarkLoadSelectedDate Set to `true` to unmark `loadSelectedDate` variable. Set to `false` to untouch.
+     * @param {Boolean} unmarkLoadSelectedDate Set to `true` to unmark `loadSelectedDate` variable. Set to `false` to untouch.
      */
     clearMapLayers(unmarkLoadSelectedDate = true) {
         for (const [key, item] of Object.entries(this.#timelineItems)) {
@@ -300,7 +304,9 @@ class LibMaps {
     /**
      * Draw timeline data on the map.
      * 
-     * @param {object} dbResult 
+     * This method was called from `TimelinePanel.#ajaxGetTimelineData()`.
+     * 
+     * @param {Object} dbResult The AJAX response data that should contain `.result.items` properties.
      */
     drawTimelineData(dbResult) {
         if (typeof(this.#timelineLayerGroup) === 'object' && this.#timelineLayerGroup !== null) {
@@ -363,7 +369,9 @@ class LibMaps {
     /**
      * Draw visited places summary by a selected year.
      * 
-     * @param {object} visitedPlacesYear 
+     * This method was called from `Index.#ajaxGetSummaryByYear()`.
+     * 
+     * @param {Object} visitedPlacesYear AJAX response within `.visitedPlacesYear` property.
      */
     drawYearSummary(visitedPlacesYear) {
         if (visitedPlacesYear?.items) {
@@ -415,7 +423,9 @@ class LibMaps {
     /**
      * Open map popups.
      * 
-     * @param {string} segment_id 
+     * This method was called from `TimelinePanel.#listenClickTimelineItem()`.
+     * 
+     * @param {string} segment_id The `segment_id` from DB.
      */
     openMapPopup(segment_id) {
         if (typeof(segment_id) !== 'string') {
@@ -443,8 +453,10 @@ class LibMaps {
     /**
      * Setup default map.
      * 
-     * @param {object} summaryVisitedPlaces The ajax result of summary visited places. This object must contain `items` property to display markers.
-     * @returns null|void
+     * This method was called from `Index.#setupDefaultMap()`.
+     * 
+     * @param {Object} summaryVisitedPlaces The AJAX result of summary visited places. This object must contain `items` property to display markers.
+     * @returns {null|undefined}
      */
     setupDefaultMap(summaryVisitedPlaces = {}) {
         if (true === defaultMapsLoaded) {
@@ -531,4 +543,4 @@ class LibMaps {
     }// setupDefaultMap
 
 
-}
+}// LibMaps

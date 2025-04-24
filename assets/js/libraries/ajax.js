@@ -99,4 +99,4 @@ class Ajax {
     }// fetchPost
 
 
-}
+}// Ajax

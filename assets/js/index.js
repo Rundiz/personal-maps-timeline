@@ -35,9 +35,10 @@ class Index {
     /**
      * AJAX get edit place name form and its data.
      * 
-     * @private This method was called from `#listenClickEditPlaceName()`.
-     * @param {string} placeId 
-     * @returns {Promise}
+     * This method was called from `#listenClickEditPlaceName()`.
+     * 
+     * @param {string} placeId The Google place ID.
+     * @returns {Promise} Return AJAX response data.
      */
     #ajaxGetEditPlaceNameForm(placeId) {
         return Ajax.fetchGet(appBasePath + '/HTTP/edit-placename-form.php?placeId=' + encodeURIComponent(placeId))
@@ -48,10 +49,11 @@ class Index {
 
 
     /**
-     * AJAX get summary.
+     * AJAX get summary and then display since date, total visits, min and max input date.
      * 
-     * @private This method was called from `#init()`.
-     * @returns {Promise};
+     * This method was called from `#init()`.
+     * 
+     * @returns {Promise} Return AJAX response data.
      */
     #ajaxGetSummary() {
         return Ajax.fetchGet(appBasePath + '/HTTP/summary.php')
@@ -99,10 +101,12 @@ class Index {
 
 
     /**
-     * AJAX get summary data by year.
+     * AJAX get summary data by year and then draw year summary on the maps.
      * 
-     * @private This method was called from `#listenClickNavSummaryDateDropdown()`.
-     * @param {number} selectedYear Selected year
+     * This method was called from `#listenClickNavSummaryDateDropdown()`.
+     * 
+     * @param {Number} selectedYear Selected year
+     * @returns {Promise} Return AJAX response data.
      */
     #ajaxGetSummaryByYear(selectedYear) {
         if (
@@ -147,9 +151,9 @@ class Index {
 
 
     /**
-     * Listen on click edit place name.
+     * Listen on click edit place name and do its tasks.
      * 
-     * @private This method was called from `#init()`.
+     * This method was called from `#init()`.
      */
     #listenClickEditPlaceName() {
         const bsModal = document.getElementById('pmtl-bs-modal');
@@ -204,7 +208,7 @@ class Index {
     /**
      * Listen on click summary date > dropdown item to display summary of selected year.
      * 
-     * @private This method was called from `#init()`.
+     * This method was called from `#init()`.
      */
     #listenClickNavSummaryDateDropdown() {
         document.addEventListener('click', (event) => {
@@ -240,7 +244,7 @@ class Index {
     /**
      * Listen on click outside navbar menu then close it.
      * 
-     * @private This method was called from `#init()`.
+     * This method was called from `#init()`.
      */
     #listenClickOutsideCloseNavMenu() {
         document.addEventListener('click', (event) => {
@@ -259,9 +263,9 @@ class Index {
 
 
     /**
-     * Listen on default map loaded.
+     * Listen on default map loaded then clear property `#ajaxLoaded.summaryVisitedPlaces` to free memory.
      * 
-     * @private This method was called from `#init()`.
+     * This method was called from `#init()`.
      */
     #listenDefaultMapLoaded() {
         document.addEventListener('pmtl.default.maps.loaded', () => {
@@ -274,7 +278,8 @@ class Index {
     /**
      * Listen form submit on edit place name form and make AJAX save.
      * 
-     * @private This method was called from `#init()`.
+     * This method was called from `#init()`.
+     * 
      * @returns {undefined}
      */
     #listenFormSubmitEditPlaceName() {
@@ -315,7 +320,7 @@ class Index {
     /**
      * Setup default map.
      * 
-     * @private This method was called from `#init()`.
+     * This method was called from `#init()`.
      */
     #setupDefaultMap() {
         this.#LibMaps.setupDefaultMap(this.#ajaxLoaded.summaryVisitedPlaces);
@@ -324,6 +329,8 @@ class Index {
 
     /**
      * Clear all actived navbar items.
+     * 
+     * This method must be able to call from outside this class.
      */
     clearAllActiveNavItems() {
         const navbarNav = document.querySelector('.navbar-nav');
@@ -339,6 +346,7 @@ class Index {
 }// Index
 
 
+// Start JS on page loaded all HTML. ===================
 window.addEventListener('DOMContentLoaded', () => {
     const indexPageObj = new Index();
 });

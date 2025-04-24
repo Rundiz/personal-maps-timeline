@@ -98,7 +98,7 @@ $customHTMLFoot = '<script src="' . $Url->getAppBasePath() . '/assets/vendor/lea
 <script src="' . $Url->getAppBasePath() . '/assets/js/libraries/ajax.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/libraries/mapsUtil.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/libraries/utils.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/libraries/maps/libMaps.js"></script>
+<script src="' . $Url->getAppBasePath() . '/assets/js/libraries/maps/libMapsLeaflet.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/index/timeline-panel.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/index.js"></script>';
 include 'HTTP/common/html-foot.php';
