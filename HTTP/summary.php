@@ -65,7 +65,7 @@ unset($row);
 // list all visits uniquely. ==================================================
 // @link https://stackoverflow.com/a/1313293/128761 get latest record from unique location.
 $sql = 'WITH `latest_location` AS (
-    SELECT `v`.*, ROW_NUMBER() OVER (PARTITION BY `topCandidate_placeLocation_latLng` ORDER BY `visit_id` DESC) AS ll
+    SELECT `v`.*, ROW_NUMBER() OVER (PARTITION BY `topCandidate_placeLocation_latLng` ORDER BY `visit_id` DESC) AS LL
     FROM `visit` AS `v`
 )
 SELECT `semanticsegments`.`id`, `semanticsegments`.`startTime`, 
@@ -74,7 +74,7 @@ SELECT `semanticsegments`.`id`, `semanticsegments`.`startTime`,
 FROM `latest_location` 
 INNER JOIN `semanticsegments` ON `latest_location`.`segment_id` = `semanticsegments`.`id`
 LEFT JOIN `google_places` ON `latest_location`.`topCandidate_placeId` = `google_places`.`place_id`
-WHERE `ll` = 1 
+WHERE `LL` = 1 
 ORDER BY `visit_id` ASC';
 $Sth = $dbh->prepare($sql);
 unset($sql);
