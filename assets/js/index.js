@@ -127,7 +127,7 @@ class Index {
             }
             this.#LibMaps.drawYearSummary(response?.visitedPlacesYear);
             return Promise.resolve(response);
-        })
+        });
     }// #ajaxGetSummaryByYear
 
 
@@ -140,7 +140,7 @@ class Index {
         await this.#ajaxGetSummary();
 
         this.#listenDefaultMapLoaded();
-        this.#LibMaps = new LibMaps();
+        this.#LibMaps = new LibMaps(this);
         this.#setupDefaultMap();
 
         this.#TimelinePanel = new TimelinePanel(this.#LibMaps, this);
@@ -227,7 +227,6 @@ class Index {
 
                 // un-active all dropdown items.
                 this.clearAllActiveNavItems();
-                IndexJSObject.summaryDateSelectedYear = null;
 
                 // restore real total visit value on navbar.
                 const navTotalVisitElement = document.getElementById('pmtl-nav-total-visit');
@@ -248,6 +247,10 @@ class Index {
 
                     this.#ajaxGetSummaryByYear(thisTarget.dataset.year);
                 }// endif; selected year is number.
+
+                if (this.#LibMaps.isPathsTraveledLayerGroupActived()) {
+                    this.ajaxGetSummaryPathsTraveled();
+                }
             }// endif; there is a class.
         });
     }// #listenClickNavSummaryDateDropdown
@@ -340,6 +343,27 @@ class Index {
 
 
     /**
+     * AJAX get summary of paths traveled and then draw the paths.
+     * 
+     * This method was called from `LibMaps.#listenMapOverlayPathsTraveledSelected()`.
+     * 
+     * @returns {Promise} Return AJAX response data.
+     */
+    ajaxGetSummaryPathsTraveled() {
+        let selectedYear = '';
+        if (IndexJSObject.summaryDateSelectedYear !== null) {
+            selectedYear = IndexJSObject.summaryDateSelectedYear;
+        }
+
+        return Ajax.fetchGet(appBasePath + '/HTTP/summary-paths-traveled.php?year=' + encodeURIComponent(selectedYear))
+        .then((response) => {
+            this.#LibMaps.drawPathsTraveled(response);
+            return Promise.resolve(response);
+        });
+    }// ajaxGetSummaryPathsTraveled
+
+
+    /**
      * Clear all actived navbar items.
      * 
      * This method must be able to call from outside this class.
@@ -352,6 +376,9 @@ class Index {
                 item.classList.remove('active');
             });
         }
+
+        // also reset selected year on the JS object to `null`.
+        IndexJSObject.summaryDateSelectedYear = null;
     }// clearAllActiveNavItems
 
 

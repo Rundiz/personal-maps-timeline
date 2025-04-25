@@ -11,6 +11,12 @@ class LibMaps {
 
 
     /**
+     * @type {Index}
+     */
+    #Index;
+
+
+    /**
      * @type {L.control.layers} Leaflet layer control from `L.control.layers`.
      */
     #layerControl = {};
@@ -42,10 +48,116 @@ class LibMaps {
 
     /**
      * Leaflet as LibMaps class constructor.
+     * 
+     * @param {Index} Index The `Index` class.
      */
-    constructor() {
+    constructor(Index) {
+        if (typeof(Index) === 'object') {
+            this.#Index = Index;
+        }
+
         this.#listenClickYearVisited();
     }// constructor
+
+
+    /**
+     * @type {String} The "Paths traveled" layer name.
+     */
+    get #pathsTraveledLayerName() {
+        return 'Paths traveled';
+    }// #pathsTraveledLayerName
+
+
+    /**
+     * Close "Paths traveled" layer group.
+     * 
+     * This method was called from `drawTimelineData()`, `#listenMapOverlayPathsTraveledSelected()`.
+     * 
+     * @link https://stackoverflow.com/a/78865335/128761 Original source code.
+     * @returns {undefined}
+     */
+    #closePathsTraveledLayerGroup() {
+        const labels = document.querySelectorAll('.leaflet-control-layers-overlays label');
+
+        for (const label of labels) {
+            if (label.textContent.toLowerCase().trim() !== this.#pathsTraveledLayerName.toLowerCase()) {
+                continue;
+            }
+
+            const input = label.querySelector('input');
+            if (input.checked) {
+                input.click();
+                break;
+            }// endif;
+        }// endfor;
+
+        this.#pathsTraveledLayerGroup?.clearLayers();
+    }// #closePathsTraveledLayerGroup
+
+
+    /**
+     * Draw paths traveled.
+     * 
+     * This method was called from `drawPathsTraveled()`.
+     * 
+     * @param {Object} response AJAX response.
+     * @returns {undefined}
+     */
+    #drawPathsTraveled(response) {
+        if (response?.result?.items) {
+            // if there are response items from AJAX.
+            const defaultPathStyle = {
+                color: '#8f9aa8',
+                opacity: 0.5,
+                weight: 4,
+            };
+            const highlightPathStyle = {
+                color: '#7055c9',
+                opacity: 0.6,
+                weight: 5,
+            }
+
+            for (const eachSegment of response.result.items) {
+                if (eachSegment?.timelinepath?.length <= 1) {
+                    continue;
+                }
+                let timelinePaths = [];
+                let timelinePathsTimes = [];
+                timelinePaths = eachSegment.timelinepath.map((tlp) => {
+                    return MapsUtil.convertLatLngString(tlp.point);
+                });
+                timelinePathsTimes = eachSegment.timelinepath.map((tlp) => {
+                    const tlpDate = new Date(tlp.time);
+                    return parseInt(tlpDate.getTime());
+                });
+
+                const polyline = L.polyline(timelinePaths, defaultPathStyle);
+                const oldestDate = new Date(Math.min(...timelinePathsTimes));
+                const newestDate = new Date(Math.max(...timelinePathsTimes));
+                polyline.bindPopup(
+                    '<p><strong>Travel</strong></p>'
+                    + 'On <a class="marker-popup-year-visited" data-last-visit-date="' + Utils.formatDate(oldestDate) + '">' + Utils.formatDate(oldestDate)
+                    + ' '
+                    + Utils.formatTimeHM(oldestDate) + '</a>'
+                    + ' - '
+                    + '<a class="marker-popup-year-visited" data-last-visit-date="' + Utils.formatDate(newestDate) + '">' + Utils.formatDate(newestDate)
+                    + ' '
+                    + Utils.formatTimeHM(newestDate) + '</a>',
+                    {
+                        className: 'map-marker-popup',
+                    }
+                );
+                polyline.on('popupopen', () => {
+                    polyline.setStyle(highlightPathStyle);
+                });
+                polyline.on('popupclose', () => {
+                    polyline.setStyle(defaultPathStyle);
+                });
+
+                this.#pathsTraveledLayerGroup.addLayer(polyline);
+            }// endfor; loop each semantic segment row.
+        }// endif; there is response items from AJAX.
+    }// #drawPathsTraveled
 
 
     /**
@@ -259,6 +371,35 @@ class LibMaps {
 
 
     /**
+     * Listen map overlay "Paths traveled" selected.
+     * 
+     * This method was called from `setupDefaultMap()`.
+     * 
+     * @returns {undefined}
+     */
+    #listenMapOverlayPathsTraveledSelected() {
+        const thisClass = this;
+        this.#map.addEventListener('overlayadd', (event) => {
+            const layerNameLcase = event.name?.toLowerCase();
+            if (layerNameLcase.includes(thisClass.#pathsTraveledLayerName.toLowerCase())) {
+                // if overlay layer paths traveled in checked.
+                if (IndexJSObject.loadSelectedDate !== false) {
+                    // if it is currently opening timeline data.
+                    // do not work on load paths traveled layer otherwise user PC may crash due to overload.
+                    alert('You are currently opening timeline data. Couldn\'t load this layer to prevent slow or crash.');
+                    console.log('Opening timeline data. Couldn\'t load this layer to prevent slow or crash. Closing layer.');
+                    thisClass.#closePathsTraveledLayerGroup();
+                    return ;
+                }
+
+                // AJAX get data and display it.
+                thisClass.#Index.ajaxGetSummaryPathsTraveled();
+            }// endif; overlay layer paths traveled in checked.
+        });// end addEventListener 'overlayadd'
+    }// #listenMapOverlayPathsTraveledSelected
+
+
+    /**
      * Listen map popup open and display years visited. This means user clicked on marker of summary places (gray dots).
      * 
      * This method was called from `setupDefaultMap()`.
@@ -321,6 +462,23 @@ class LibMaps {
 
 
     /**
+     * Draw paths traveled.
+     * 
+     * This method was called from `Index.ajaxGetSummaryPathsTraveled()`.
+     * 
+     * @see LibMaps.#drawPathsTraveled()
+     * @param {Object} response AJAX response.
+     * @returns {undefined}
+     */
+    drawPathsTraveled(response) {
+        // clear previously rendered before display new one.
+        this.#pathsTraveledLayerGroup?.clearLayers();
+
+        return this.#drawPathsTraveled(response);
+    }// drawPathsTraveled
+
+
+    /**
      * Draw timeline data on the map.
      * 
      * This method was called from `TimelinePanel.#ajaxGetTimelineData()`.
@@ -333,6 +491,7 @@ class LibMaps {
             // just clear layers to remove previous loaded date.
             this.clearMapTimelineLayerGroup(false);
         }
+        this.#closePathsTraveledLayerGroup();
 
         if (dbResult?.result?.items) {
             this.#timelineLayerGroup = L.featureGroup([]);
@@ -345,9 +504,19 @@ class LibMaps {
             dbResult.result.items.forEach((item, index) => {
                 if (item.activity) {
                     // if there is activity.
-                    // do not prepend activity to timeline paths because it may cause of confustion 
+                    // do not prepend activity to timeline paths because it may cause of confusion 
                     // and can be duplicate paths on the same time.
                     // activity is covered by the timeline time between start to end.
+                    /*const activityPathStyle = {
+                        color: 'orange',
+                        weight: 3,
+                    };
+                    const activityStartLatLng = MapsUtil.convertLatLngString(item.activity.start_latLng);
+                    const activityEndLatLng = MapsUtil.convertLatLngString(item.activity.end_latLng);
+                    const polyline = L.polyline([activityStartLatLng, activityEndLatLng], activityPathStyle);
+                    polyline.bindPopup('actvt id: ' + item.activity.activity_id);
+                    this.#timelineLayerGroup.addLayer(polyline);*/
+                    // the code above is for debugging only. to show that activity is already have paths in the `timelinepath` and `timelinepath` have a lot more details on points.
                 }
 
                 // build timeline paths.
@@ -440,6 +609,18 @@ class LibMaps {
 
 
     /**
+     * Check if paths traveled layer group is already actived or checked.
+     * 
+     * This method was called from `Index.#listenClickNavSummaryDateDropdown()`.
+     * 
+     * @returns {Boolean} Return `true` if yes, `false` for otherwise.
+     */
+    isPathsTraveledLayerGroupActived() {
+        return this.#map.hasLayer(this.#pathsTraveledLayerGroup);
+    }// isPathsTraveledLayerGroupActived
+
+
+    /**
      * Open map popups.
      * 
      * This method was called from `TimelinePanel.#listenClickTimelineItem()`.
@@ -510,8 +691,8 @@ class LibMaps {
             'OpenStreetMap': mapLayer,
             'Sattellite view': sattelliteLayer,
         };
-        const overlayLayer = {
-        };
+        let overlayLayer = {};
+        overlayLayer[this.#pathsTraveledLayerName] = this.#pathsTraveledLayerGroup;
         // end set map layers. ------------------------------------------
 
         this.#map = L.map('pmtl-map', {
@@ -561,6 +742,7 @@ class LibMaps {
         }// endif;
         // end display summary visited places. --------------------------
 
+        this.#listenMapOverlayPathsTraveledSelected();
         this.#listenMapPopupOpenDisplayYearsVisited();
     }// setupDefaultMap
 

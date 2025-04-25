@@ -3,7 +3,8 @@
     "require": {
         "php": ">= 7.4",
         "robmorgan/phinx": "^0.16.0",
-        "symfony/console": "~7.0"
+        "symfony/console": "~7.0",
+        "rundiz/simple-cache": "~3.0||~3.1"
     },
     "autoload": {
         "psr-4": {
