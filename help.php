@@ -26,7 +26,7 @@ include 'HTTP/common/html-head.php';
                     <ol>
                         <li>Extract <strong>.json</strong> file into your folder.</li>
                         <li>Edit path to your folder in variable <code>$jsonFolder</code> in a file <strong><?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>config.php</strong>.</li>
-                        <li>Run a command <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>import-json-to-db.php&quot;</code>.</li>
+                        <li>Run a command <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>pmtl.php&quot; import-json-to-db</code>.</li>
                     </ol>
                     <h4>Clear the imported data on DB.</h4>
                     <p>
