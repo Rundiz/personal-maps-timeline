@@ -1,4 +1,10 @@
 <?php
+/**
+ * Warning! This file will be deleted in the future.  
+ * Use this command instead: `php pmtl.php clear-db`.
+ * @since 2025-04-25
+ * @deprecated since 2025-04-25
+ */
 
 
 if (strtolower(php_sapi_name()) !== 'cli') {
@@ -11,28 +17,32 @@ require 'config.php';
 require 'vendor/autoload.php';
 
 
-$Db = new \PMTL\Libraries\Db();
-$dbh = $Db->connect();
-
-
-echo 'Are you sure to clear all location DB data? [y/n]';
-$confirmation = strtolower(trim(fgets(STDIN)));
-if ($confirmation !=='y') {
-   // The user did not say 'y'.
-   echo 'Cancelled.';
-   exit(1);
+if (!defined('PMTL_MEMORY_LIMIT')) {
+    define('PMTL_MEMORY_LIMIT', '1G');
 }
+ini_set('memory_limit', PMTL_MEMORY_LIMIT);
 
 
-$dbh->query('TRUNCATE `activity`');
-$dbh->query('TRUNCATE `semanticsegments`');
-$dbh->query('TRUNCATE `timelinememory`');
-$dbh->query('TRUNCATE `timelinememory_trip_destinations`');
-$dbh->query('TRUNCATE `timelinepath`');
-$dbh->query('TRUNCATE `visit`');
+// start process. ==================================
+
+echo 'Warning! This file will be deleted in the future.' . PHP_EOL
+    . 'Please use this command instead: `php pmtl.php clear-db`.' . PHP_EOL . PHP_EOL;
+
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 
 
-$Db->disconnect();
-unset($Db, $dbh);
+$MainEntry = new \PMTL\CLI\MainEntry();
+$Application = $MainEntry->Application;
+$Application->setAutoExit(false);
+unset($MainEntry);
 
-echo 'All data cleared.' . PHP_EOL;
+$input = new ArrayInput([
+    'command' => 'clear-db',
+]);
+
+$Application->run($input);
+
+unset($input, $output);
+unset($Application, $converter);

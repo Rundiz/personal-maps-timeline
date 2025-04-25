@@ -36,6 +36,9 @@ date_default_timezone_set('Asia/Bangkok');
 // If you have problem with SSL, then download .pem file from https://curl.se/docs/caextract.html and set the full path in this constant value.
 define('CAINFO_FILE', '');
 
+// Set maximum memory limit for PHP. ( See https://www.php.net/manual/en/ini.core.php#ini.memory-limit )
+define('PMTL_MEMORY_LIMIT', '1G');
+
 
 // ==================================================================
 // Do not edit line below this.

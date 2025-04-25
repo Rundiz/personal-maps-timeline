@@ -31,12 +31,16 @@ include 'HTTP/common/html-head.php';
                     <h4>Clear the imported data on DB.</h4>
                     <p>
                         If you have to clear all data on DB before import, run a command
-                        <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>clear-db.php&quot;</code>.
+                        <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>pmtl.php&quot; clear-db</code>.
                     </p>
                     <h4>Retrieve the place name</h4>
                     <p>To retrieve the place name from Google Places, run a command <code>php &quot;<?php echo __DIR__ . DIRECTORY_SEPARATOR; ?>retrieve-place-detail.php&quot; --help</code> to read more info.</p>
 
-                    <p><a href="./">Go back to Personal maps timeline page</a></p>
+                    <p>
+                        <a href="./">Go back to Personal maps timeline page</a>
+                        |
+                        <a href="https://github.com/Rundiz/personal-maps-timeline" target="github">Visit me on GitHub</a>
+                    </p>
                 </div>
             </div>
         </div>

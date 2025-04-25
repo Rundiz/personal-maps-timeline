@@ -15,7 +15,7 @@ $Db = new \PMTL\Libraries\Db();
 $dbh = $Db->connect();
 
 
-set_time_limit(3000000);
+// @link https://www.php.net/manual/en/info.configuration.php#ini.max-execution-time PHP CLI is already unlimited execution timeout by default.
 ini_set('memory_limit', '2048M');
 
 

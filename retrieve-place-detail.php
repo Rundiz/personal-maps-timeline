@@ -11,7 +11,6 @@ require 'config.php';
 require 'vendor/autoload.php';
 
 
-set_time_limit(3000000);
 ini_set('memory_limit', '2048M');
 
 
