@@ -16,12 +16,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * Check DB structure class.
  */
-#[AsCommand(
-        name: 'check-db-structure',
-        description: 'Check for data structure in JSON but not exists on DB.',
-        hidden: false,
-        aliases: ['checkdbstructure'],
-)]
 class CheckDBStructure extends Command
 {
 
@@ -169,6 +163,9 @@ class CheckDBStructure extends Command
      */
     protected function configure(): void
     {
+        $this->setName('check-db-structure');
+        $this->setDescription('Check for data structure in JSON but not exists on DB.');
+        $this->setAliases(['checkdbstructure']);
     }// configure
 
 

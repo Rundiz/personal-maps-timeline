@@ -17,17 +17,22 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 /**
  * Clear the database class.
  */
-#[AsCommand(
-        name: 'clear-db',
-        description: 'Clear all the data on database.',
-        hidden: false,
-        aliases: ['cleardb'],
-)]
 class ClearDB extends Command
 {
 
 
     use Traits\OutputStyles;
+
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function configure(): void
+    {
+        $this->setName('clear-db');
+        $this->setDescription('Clear all the data on database.');
+        $this->setAliases(['cleardb']);
+    }// configure
 
 
     /**
