@@ -8,6 +8,7 @@ namespace PMTL\CLI\Commands\Traits;
 
 
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
+use Symfony\Component\Console\Output\OutputInterface;
 
 
 /**
@@ -18,24 +19,18 @@ trait OutputStyles
 
 
     /**
-     * @var \Symfony\Component\Console\Output\OutputInterface
-     */
-    private $symfonyOutput;
-
-
-    /**
      * Define output style.
      * 
      * @link https://symfony.com/doc/current/console/coloring.html Document.
      */
-    protected function defineOutputStyle()
+    protected function defineOutputStyle(OutputInterface $output)
     {
         $outputStyleSuccess = new OutputFormatterStyle('green');
-        $this->symfonyOutput->getFormatter()->setStyle('success', $outputStyleSuccess);
+        $output->getFormatter()->setStyle('success', $outputStyleSuccess);
         unset($outputStyleSuccess);
 
         $outputStyleWarning = new OutputFormatterStyle('yellow');
-        $this->symfonyOutput->getFormatter()->setStyle('warning', $outputStyleWarning);
+        $output->getFormatter()->setStyle('warning', $outputStyleWarning);
         unset($outputStyleWarning);
     }// defineOutputStyle
 

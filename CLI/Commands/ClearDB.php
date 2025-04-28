@@ -39,8 +39,7 @@ class ClearDB extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->symfonyOutput = $output;
-        $this->defineOutputStyle();
+        $this->defineOutputStyle($output);
 
         $helper = $this->getHelper('question');
         $question = new ConfirmationQuestion('Are you sure to clear all location DB data? [y/n]', false);
