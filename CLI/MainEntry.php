@@ -64,6 +64,7 @@ class MainEntry
         $this->Application->add(new Commands\CheckDBStructure());
         $this->Application->add(new Commands\ClearDB());
         $this->Application->add(new Commands\ImportJsonToDB());
+        $this->Application->add(new Commands\RetrievePlaceDetail());
     }// registerCommands
 
 

@@ -24,6 +24,7 @@ $jsonFile = null;// set to `null` to use all files.
 // Google Maps place API key.
 // This is for use with some features that require Google API such as retrieve place detail from Google Maps based on its place ID.
 // You can leave this empty.
+// To enable this, go to https://console.cloud.google.com/google/maps-apis/api-list select your project and enable Places API (New).
 define('GOOGLE_MAPS_API_KEY', '');
 
 // If you are making large numbers of request to Nominatim please include an appropriate email address. ( Read more at https://nominatim.org/release-docs/develop/api/Reverse/#other )

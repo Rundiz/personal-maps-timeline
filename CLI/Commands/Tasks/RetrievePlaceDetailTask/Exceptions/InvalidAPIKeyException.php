@@ -4,7 +4,7 @@
  */
 
 
-namespace PMTL\CLI\Exceptions;
+namespace PMTL\CLI\Commands\Tasks\RetrievePlaceDetailTask\Exceptions;
 
 
 /**

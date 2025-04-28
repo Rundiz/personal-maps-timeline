@@ -4,13 +4,13 @@
  */
 
 
-namespace PMTL\CLI\Exceptions;
+namespace PMTL\CLI\Commands\Tasks\RetrievePlaceDetailTask\Exceptions;
 
 
 /**
- * API disabled exception.
+ * JSON exception.
  */
-class ApiDisabledException extends \Exception
+class JSONException extends \Exception
 {
 
 
