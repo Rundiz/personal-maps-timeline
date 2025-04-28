@@ -26,7 +26,7 @@ ini_set('memory_limit', PMTL_MEMORY_LIMIT);
 // start process. ==================================
 
 echo 'Warning! This file will be deleted in the future.' . PHP_EOL
-    . 'Please use this command instead: `php pmtl.php retrieve-place-detail`.' . PHP_EOL . PHP_EOL;
+    . 'Please use this command instead: `php pmtl.php retrieve-place-detail --help`.' . PHP_EOL . PHP_EOL;
 
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -40,6 +40,7 @@ unset($MainEntry);
 
 $input = new ArrayInput([
     'command' => 'retrieve-place-detail',
+    'api_engine' => ($argv[1] ?? ''),
 ]);
 
 $Application->run($input);

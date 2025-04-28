@@ -109,6 +109,8 @@ class RetrievePlaceDetail extends Command
         $APIEngine = $input->getArgument('api_engine');
         if (!in_array($APIEngine, RetrievePlaceDetailTask::VALID_API_ENGINES)) {
             $output->writeln('<error>Please enter the correct API engine. Accepted ' . $this->commandAcceptAPIEngineString . '.</error>');
+            $APIEngine = null;
+            $this->APIEngine = null;
         } else {
             $this->APIEngine = $APIEngine;
         }// endif; check valid api_engine argument.
