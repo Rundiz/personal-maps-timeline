@@ -228,13 +228,8 @@ class Index {
                 // un-active all dropdown items.
                 this.clearAllActiveNavItems();
 
-                // restore real total visit value on navbar.
-                const navTotalVisitElement = document.getElementById('pmtl-nav-total-visit');
-                if (navTotalVisitElement) {
-                    navTotalVisitElement.innerText = navTotalVisitElement.dataset.totalValue;
-                }
-
                 if (!isNaN(thisTarget.dataset.year)) {
+                    // if selected year is number
                     IndexJSObject.summaryDateSelectedYear = thisTarget.dataset.year;
                     // mark current item as active
                     thisTarget.classList.add('active');
@@ -246,6 +241,13 @@ class Index {
                     }
 
                     this.#ajaxGetSummaryByYear(thisTarget.dataset.year);
+                } else {
+                    // if selected year is not number.
+                    // restore real total visit value on navbar.
+                    const navTotalVisitElement = document.getElementById('pmtl-nav-total-visit');
+                    if (navTotalVisitElement) {
+                        navTotalVisitElement.innerText = navTotalVisitElement.dataset.totalValue;
+                    }
                 }// endif; selected year is number.
 
                 if (this.#LibMaps.isPathsTraveledLayerGroupActived()) {
