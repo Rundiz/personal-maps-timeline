@@ -29,7 +29,7 @@ $Sth->execute();
 $row = $Sth->fetchObject();
 $Sth->closeCursor();
 unset($Sth);
-if ($row) {
+if (is_object($row) && is_string($row->minDateTime) && is_string($row->maxDateTime)) {
     $oldDt = new \DateTime($row->minDateTime);
     $latestDt = new \DateTime($row->maxDateTime);
     $output['recordDates'] = [
