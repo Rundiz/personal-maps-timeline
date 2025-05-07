@@ -41,8 +41,20 @@ body {
 }
 
 
+.nav-item:has(.nav-link) {
+    transition: padding 0.08s;
+}
 .nav-item:has(.nav-link):has(.active) {
-    box-shadow: 0px 4px 2px -2px rgba(155,155,155,.7);
+    background-image: linear-gradient(180deg, rgba(200, 200, 200, 0.3) 0%, rgba(0, 0, 0, 0) 100%);
+    box-shadow: inset 0px 2px 2px 0px rgba(155,155,155,.7);
+    padding-left: 4px;
+    padding-right: 4px;
+}
+@media (min-width: 768px) {
+    .nav-item:has(.nav-link):has(.active) {
+        padding-left: 0;
+        padding-right: 0;
+    }
 }
 
 
@@ -88,6 +100,7 @@ body {
     border-top-right-radius: var(--border-radius);
     bottom: 0;
     display: none;
+    flex-flow: column;
     height: 85px;
     left: 50%;
     max-height: calc(100% - 10px);
@@ -101,19 +114,27 @@ body {
 @media (min-width: 768px) {
     #pmtl-timeline-panel {
         bottom: auto;
+        display: flex;
         height: auto !important;
-        left: auto;
+        left: -100%;
         max-height: none;
         max-width: 500px;
-        min-width: 300px;
+        min-width: 0;
         position: relative;
         transform: none;
-        width: 30%;
+        transition: left 0.1s, min-width 0.2s, width 0.2s;
+        width: 0;
     }
 }
 #pmtl-timeline-panel.show {
     display: flex;
-    flex-flow: column;
+}
+@media (min-width: 768px) {
+    #pmtl-timeline-panel.show {
+        left: 0;
+        min-width: 300px;
+        width: 30%;
+    }
 }
 #pmtl-timeline-panel .btn:focus {
     box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);

@@ -295,6 +295,9 @@ class TimelinePanel {
                     timelinePanel?.classList?.add('show');
                     this.#openPanelLoadTimelineData();
                 }
+
+                // on show or hide timeline panel, maps container size changed. update them.
+                this.#LibMaps.updateMap();
             });
         }
     }// #listenClickOpenTimelinePanel

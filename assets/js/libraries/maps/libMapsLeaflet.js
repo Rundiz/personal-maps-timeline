@@ -747,4 +747,15 @@ class LibMaps {
     }// setupDefaultMap
 
 
+    /**
+     * Update the map. This is recommend to do after container size changed.
+     * 
+     * @link https://leafletjs.com/reference.html#map-invalidatesize Document.
+     * @returns {undefined}
+     */
+    updateMap() {
+        this.#map.invalidateSize(true);
+    }
+
+
 }// LibMaps
