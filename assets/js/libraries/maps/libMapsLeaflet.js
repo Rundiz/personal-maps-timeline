@@ -348,11 +348,11 @@ class LibMaps {
                 const lvdDate = new Date(lastVisitDate);
 
                 // set input date value.
-                const inputDate = document.getElementById('pmtl-timeline-control-date-input');
+                const inputDate = document.getElementById(this.#Index.TimelinePanel.timelineDateInputId);
                 inputDate.value = Utils.formatDate(lvdDate);
 
                 // trigger open timeline panel.
-                const selectDateMenuLink = document.getElementById('pmtl-open-timeline-panel');
+                const selectDateMenuLink = document.getElementById(this.#Index.TimelinePanel.openTimelinePanelLinkId);
                 if (!selectDateMenuLink.classList.contains('active')) {
                     // if not opened.
                     selectDateMenuLink.dispatchEvent(new Event('click'));

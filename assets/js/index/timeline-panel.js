@@ -19,6 +19,12 @@ class TimelinePanel {
 
 
     /**
+     * @type {ListingPanel}
+     */
+    #ListingPanel;
+
+
+    /**
      * @var {String} openTimelinePanelLinkId Open timeline panel link ID.
      */
     #openTimelinePanelLinkId = 'pmtl-open-timeline-panel';
@@ -43,12 +49,6 @@ class TimelinePanel {
 
 
     /**
-     * @var {String} #timelinePanelId Timeline panel ID.
-     */
-    #timelinePanelId = 'pmtl-timeline-panel';
-
-
-    /**
      * Timeline panel constructor.
      * 
      * @param {LibMaps} LibMaps The `LibMaps` class.
@@ -61,6 +61,7 @@ class TimelinePanel {
         if (typeof(Index) === 'object') {
             this.#Index = Index;
         }
+        this.#ListingPanel = new ListingPanel(LibMaps, Index);
     }// constructor
 
 
@@ -278,7 +279,6 @@ class TimelinePanel {
      */
     #listenClickOpenTimelinePanel() {
         const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
-        const timelinePanel = document.getElementById(this.#timelinePanelId);
 
         if (selectDateMenuLink) {
             selectDateMenuLink.addEventListener('click', (event) => {
@@ -292,50 +292,12 @@ class TimelinePanel {
                     this.#Index.clearAllActiveNavItems();
 
                     selectDateMenuLink.classList.add('active');
-                    timelinePanel?.classList?.add('show');
+                    this.#ListingPanel.openPanel();
                     this.#openPanelLoadTimelineData();
                 }
-
-                // on show or hide timeline panel, maps container size changed. update them.
-                // timeout delay must match CSS transition.
-                setTimeout(() => {
-                    this.#LibMaps.updateMap();
-                }, 200);
             });
         }
     }// #listenClickOpenTimelinePanel
-
-
-    /**
-     * Listen on click timeline panel control buttons.
-     * 
-     * This method was called from `init()`.
-     */
-    #listenClickPanelControlButtons() {
-        const timelinePanel = document.getElementById(this.#timelinePanelId);
-        const timelinePanelCloseBtn = document.getElementById('pmtl-timeline-panel-close-btn');
-        const timelinePanelMinMaxBtn = document.getElementById('pmtl-timeline-panel-maxmin-btn');
-
-        if (timelinePanelCloseBtn) {
-            timelinePanelCloseBtn.addEventListener('click', () => {
-                this.closeTimelinePanel();
-            });
-        }
-
-        if (timelinePanelMinMaxBtn) {
-            timelinePanelMinMaxBtn.addEventListener('click', () => {
-                if (timelinePanel.classList.contains('is-max')) {
-                    // if is already maximize.
-                    timelinePanel.classList.remove('is-max');
-                    timelinePanel.style.height = '30px';
-                } else {
-                    // if minimize.
-                    timelinePanel.classList.add('is-max');
-                    timelinePanel.style.height = '100%';
-                }
-            });
-        }
-    }// #listenClickPanelControlButtons
 
 
     /**
@@ -426,65 +388,15 @@ class TimelinePanel {
 
 
     /**
-     * Listen on resize timeline panel and resize it.
+     * Listen listing panel "click" close event.
      * 
      * This method was called from `init()`.
      */
-    #listenResizeTimelinePanel() {
-        const resizeEl = document.getElementById('pmtl-timeline-panel-resize');
-        const panel = document.getElementById(this.#timelinePanelId);
-        let myPos = 0;
-        myPos = parseFloat(myPos);
-
-        /**
-         * Do resize the timeline panel.
-         * 
-         * @param {Object} event The event object.
-         * @returns {undefined}
-         */
-        function resizePanel(event){
-            let dy;
-            if (typeof(event.touches) === 'object') {
-                const touch0 = event.touches[0];
-                dy = myPos - touch0.clientY;
-                myPos = touch0.clientY;
-            } else {
-                dy = myPos - event.clientY;
-                myPos = event.clientY;
-            }
-            const currentPanelHeight = parseInt(getComputedStyle(panel, '').height);
-            panel.style.height = parseInt(currentPanelHeight + dy) + "px";
-            // set the `data-` for easy debugging.
-            panel.dataset.myPos = myPos;
-            panel.dataset.dy = dy;
-            panel.dataset.currentPanelHeight = currentPanelHeight;
-        }// resizePanel
-
-        // listen on resize for mobile.
-        resizeEl.addEventListener('touchstart', (event) => {
-            document.body.click();// trigger click on body to make other listener such as [close navmenu when click outside] to work.
-            const touch0 = event.touches[0];
-            myPos = touch0.clientY;
-            panel.classList.remove('is-max');
-            document.addEventListener('touchmove', resizePanel);
-        }, {
-            passive: true,
+    #listenListingPanelClickClose() {
+        document.addEventListener('pmtl.listingpanel.click.close', (event) => {
+            this.closeTimelinePanel();
         });
-        document.addEventListener('touchend', () => {
-            document.removeEventListener('touchmove', resizePanel);
-        });
-
-        // listen on resize for PC.
-        resizeEl.addEventListener('mousedown', (event) => {
-            document.body.click();
-            myPos = event.clientY;
-            panel.classList.remove('is-max');
-            document.addEventListener('mousemove', resizePanel);
-        });
-        document.addEventListener('mouseup', () => {
-            document.removeEventListener('mousemove', resizePanel);
-        });
-    }// #listenResizeTimelinePanel
+    }// #listenListingPanelClickClose
 
 
     /**
@@ -516,13 +428,31 @@ class TimelinePanel {
      */
     closeTimelinePanel() {
         const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
-        const timelinePanel = document.getElementById(this.#timelinePanelId);
         selectDateMenuLink.classList.remove('active');
-        timelinePanel?.classList?.remove('show');
-        timelinePanel.style = '';
+        this.#ListingPanel.closePanel();
         // clear loaded map layer group.
         this.#LibMaps.clearMapTimelineLayerGroup();
     }// closeTimelinePanel
+
+
+    /**
+     * Get link ID of open timeline panel.
+     * 
+     * @type {String} Link ID of open timeline panel.
+     */
+    get openTimelinePanelLinkId() {
+        return this.#openTimelinePanelLinkId;
+    }// openTimelinePanelLinkId
+
+
+    /**
+     * Get timeline date input ID.
+     * 
+     * @type {String} Return the input ID name.
+     */
+    get timelineDateInputId() {
+        return this.#timelineDateInputId;
+    }// timelineDateInputId
 
 
     /**
@@ -530,8 +460,7 @@ class TimelinePanel {
      */
     async init() {
         this.#listenClickOpenTimelinePanel();
-        this.#listenResizeTimelinePanel();
-        this.#listenClickPanelControlButtons();
+        this.#listenListingPanelClickClose();
         this.#listenEventsOnDateInput();
         this.#listenClickNextPrevDate();
         this.#listenClickTimelineItem();

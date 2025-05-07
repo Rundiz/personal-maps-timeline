@@ -41,14 +41,14 @@ $navbarExpand = 'md';
         <?php unset($navbarExpand); ?> 
         <div class="pmtl-contents">
             <div id="pmtl-map" class="pmtl-is-loading">Loading &hellip;</div>
-            <div id="pmtl-timeline-panel">
+            <div id="pmtl-listing-panel">
                 <div class="controls-row">
-                    <div id="pmtl-timeline-panel-resize" class="vertical-resize-controls" title="Resize panel">
+                    <div id="pmtl-listing-panel-resize" class="vertical-resize-controls" title="Resize panel">
                         <div class="resize-v-icon"></div>
                     </div>
                     <div class="buttons-controls">
-                        <button id="pmtl-timeline-panel-maxmin-btn" class="btn maxmin-controls" type="button" title="Minimize or maximize this panel"><i class="fa-regular fa-window-restore"></i></button>
-                        <button id="pmtl-timeline-panel-close-btn" class="btn close-controls" type="button" title="Close this panel"><i class="fa-solid fa-xmark"></i></button>
+                        <button id="pmtl-listing-panel-maxmin-btn" class="btn maxmin-controls" type="button" title="Minimize or maximize this panel"><i class="fa-regular fa-window-restore"></i></button>
+                        <button id="pmtl-listing-panel-close-btn" class="btn close-controls" type="button" title="Close this panel"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
                 <div class="pmtl-timeline-panel-container container-fluid">
@@ -71,7 +71,8 @@ $navbarExpand = 'md';
                         <div id="pmtl-timeline-panel-content-placeholder"></div>
                     </div>
                 </div>
-            </div><!-- #pmtl-timeline-panel -->
+            </div><!-- #pmtl-listing-panel -->
+
             <!-- modal dialog below is for task such as edit place name. -->
             <div id="pmtl-bs-modal" class="modal fade" tabindex="-1" aria-labelledby="pmtl-bs-modal-title" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -103,6 +104,7 @@ $customHTMLFoot = '<script src="' . $Url->getAppBasePath() . '/assets/vendor/lea
 <script src="' . $Url->getAppBasePath() . '/assets/js/libraries/mapsUtil.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/libraries/utils.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/libraries/maps/libMapsLeaflet.js"></script>
+<script src="' . $Url->getAppBasePath() . '/assets/js/index/listing-panel.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/index/timeline-panel.js"></script>
 <script src="' . $Url->getAppBasePath() . '/assets/js/index.js"></script>';
 include 'HTTP/common/html-foot.php';

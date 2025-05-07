@@ -10,7 +10,7 @@ CSS for index page.
 #pmtl-map {
     --background-color: rgba(100, 100, 100, .09);
 }
-#pmtl-timeline-panel {
+#pmtl-listing-panel {
     --default-color: #3388ff;
     --timeline-icon-top: 12px;
 }
@@ -86,15 +86,7 @@ body {
 }
 
 
-.pmtl-timeline-data-match-map-link {
-    color: var(--bs-body-color);
-    cursor: pointer;
-    display: block;
-    text-decoration: none;
-}
-
-
-#pmtl-timeline-panel {
+#pmtl-listing-panel {
     background-color: var(--bs-body-bg);
     border-top-left-radius: var(--border-radius);
     border-top-right-radius: var(--border-radius);
@@ -112,7 +104,7 @@ body {
     z-index: 1001;
 }
 @media (min-width: 768px) {
-    #pmtl-timeline-panel {
+    #pmtl-listing-panel {
         bottom: auto;
         display: flex;
         height: auto !important;
@@ -126,49 +118,49 @@ body {
         width: 0;
     }
 }
-#pmtl-timeline-panel.show {
+#pmtl-listing-panel.show {
     display: flex;
 }
 @media (min-width: 768px) {
-    #pmtl-timeline-panel.show {
+    #pmtl-listing-panel.show {
         left: 0;
         min-width: 300px;
         width: 30%;
     }
 }
-#pmtl-timeline-panel .btn:focus {
+#pmtl-listing-panel .btn:focus {
     box-shadow: 0 0 0 .25rem rgba(13,110,253,.25);
 }
-#pmtl-timeline-panel .btn:hover {
+#pmtl-listing-panel .btn:hover {
     background-color: rgba(100, 100, 100, 0.1);
 }
-#pmtl-timeline-panel .buttons-controls {
+#pmtl-listing-panel .buttons-controls {
     display: flex;
     margin-left: auto;
 }
-#pmtl-timeline-panel .buttons-controls .btn {
+#pmtl-listing-panel .buttons-controls .btn {
     border-radius: 0;
 }
-#pmtl-timeline-panel .buttons-controls .btn:focus {
+#pmtl-listing-panel .buttons-controls .btn:focus {
     box-shadow: none;
 }
-#pmtl-timeline-panel .controls-row {
+#pmtl-listing-panel .controls-row {
     align-items: center;
     display: flex;
 }
 @media (min-width: 768px) {
-    #pmtl-timeline-panel .controls-row {
+    #pmtl-listing-panel .controls-row {
         display: none;
     }
 }
-#pmtl-timeline-panel .resize-v-icon {
+#pmtl-listing-panel .resize-v-icon {
     background-color: #888;
     border-radius: 2px;
     height: 4px;
     position:relative;
     width: 100%;
 }
-#pmtl-timeline-panel .vertical-resize-controls {
+#pmtl-listing-panel .vertical-resize-controls {
     align-items: center;
     cursor: n-resize;
     display: flex;
@@ -232,6 +224,14 @@ body {
     background-position: center center;
     background-repeat: no-repeat;
     background-size: contain;
+}
+
+
+.pmtl-timeline-data-match-map-link {
+    color: var(--bs-body-color);
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
 }
 
 

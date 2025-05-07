@@ -19,6 +19,12 @@ class Index {
 
 
     /**
+     * @type {ListingPanel}
+     */
+    #ListingPanel;
+
+
+    /**
      * @type {TimelinePanel}
      */
     #TimelinePanel;
@@ -142,6 +148,9 @@ class Index {
         this.#listenDefaultMapLoaded();
         this.#LibMaps = new LibMaps(this);
         this.#setupDefaultMap();
+
+        this.#ListingPanel = new ListingPanel(this.#LibMaps, this);
+        this.#ListingPanel.init();
 
         this.#TimelinePanel = new TimelinePanel(this.#LibMaps, this);
         this.#TimelinePanel.init();
@@ -383,6 +392,16 @@ class Index {
         // also reset selected year on the JS object to `null`.
         IndexJSObject.summaryDateSelectedYear = null;
     }// clearAllActiveNavItems
+
+
+    /**
+     * Get TimelinePanel class.
+     * 
+     * @type {TimelinePanel} Timeline panel class instance.
+     */
+    get TimelinePanel() {
+        return this.#TimelinePanel;
+    }// TimelinePanel
 
 
 }// Index
