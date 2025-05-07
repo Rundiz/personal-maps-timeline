@@ -297,7 +297,10 @@ class TimelinePanel {
                 }
 
                 // on show or hide timeline panel, maps container size changed. update them.
-                this.#LibMaps.updateMap();
+                // timeout delay must match CSS transition.
+                setTimeout(() => {
+                    this.#LibMaps.updateMap();
+                }, 200);
             });
         }
     }// #listenClickOpenTimelinePanel
