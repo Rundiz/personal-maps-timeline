@@ -72,6 +72,7 @@ $navbarExpand = 'md';
                     </div>
                 </div>
             </div><!-- #pmtl-timeline-panel -->
+            <!-- modal dialog below is for task such as edit place name. -->
             <div id="pmtl-bs-modal" class="modal fade" tabindex="-1" aria-labelledby="pmtl-bs-modal-title" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
                     <div class="modal-content">

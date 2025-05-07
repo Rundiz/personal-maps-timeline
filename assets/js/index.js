@@ -315,7 +315,8 @@ class Index {
                     'body': new URLSearchParams(formData),
                     'content-type': 'application/x-www-form-urlencoded',
                 };
-                const bsModal = document.getElementById('pmtl-bs-modal');
+                const modalDialogHTML = document.getElementById('pmtl-bs-modal');
+                const bsModal = bootstrap.Modal.getInstance(modalDialogHTML);
 
                 Ajax.fetchPost(appBasePath + '/HTTP/edit-placename-save.php', fetchOptions)
                 .then((response) => {
@@ -324,7 +325,7 @@ class Index {
                         document.querySelectorAll('.place-title-placement.place-id-' + placeIdInput?.value)?.forEach((item) => {
                             item.innerText = placeNameInput?.value;
                         });
-                        bsModal.querySelector('.btn-close')?.click();
+                        bsModal?.hide();
                     } else {
                         // if failed.
                     }
