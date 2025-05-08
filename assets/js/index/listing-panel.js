@@ -155,9 +155,29 @@ class ListingPanel {
             delay = 200;
         }
 
-        setTimeout(() => {
-            this.#LibMaps.updateMap();
-        }, delay);
+        const minDelayEach = 50;
+        let totalRound = 1;
+        if (delay > minDelayEach) {
+            totalRound = Math.floor(delay / minDelayEach);
+        }
+
+        let round = 1;
+        for (round = 1; round <= totalRound; ++round) {
+            let eachDelay = minDelayEach * round;
+            if (eachDelay > delay) {
+                eachDelay = delay;
+            }
+
+            setTimeout(() => {
+                this.#LibMaps.updateMap();
+            }, eachDelay);
+        }// endfor;
+
+        if ((minDelayEach * totalRound) < delay) {
+            setTimeout(() => {
+                this.#LibMaps.updateMap();
+            }, delay);
+        }
     }// #updateMaps
 
 
