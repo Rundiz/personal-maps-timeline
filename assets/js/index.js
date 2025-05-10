@@ -13,6 +13,18 @@ class Index {
 
 
     /**
+     * @type {String} Bootstrap dialog ID.
+     */
+    #bootstrapDialogId = 'pmtl-bs-modal';
+
+
+    /**
+     * @type {DialogElement}
+     */
+    #DialogElement;
+
+
+    /**
      * @type {LibMaps}
      */
     #LibMaps;
@@ -153,6 +165,9 @@ class Index {
         this.#TimelinePanel = new TimelinePanel(this.#LibMaps, this);
         this.#TimelinePanel.init();
 
+        this.#DialogElement = new DialogElement(this);
+        this.#DialogElement.init();
+
         this.#listenClickEditPlaceName();
         this.#listenFormSubmitEditPlaceName();
 
@@ -167,52 +182,30 @@ class Index {
      * This method was called from `#init()`.
      */
     #listenClickEditPlaceName() {
-        const bsModal = document.getElementById('pmtl-bs-modal');
-        const loadingP = document.getElementById('pmtl-bs-modal-loading');
-        if (loadingP) {
-            loadingP.classList.remove('d-none');
-        }
+        document.addEventListener('click', (event) => {
+            let thisTarget = event.target;
+            if (thisTarget.closest('.pmtl-edit-placename')) {
+                thisTarget = thisTarget.closest('.pmtl-edit-placename');
+                event.preventDefault();
+            } else {
+                return ;
+            }
 
-        if (bsModal) {
-            bsModal.addEventListener('show.bs.modal', (event) => {
-                // Button that triggered the modal
-                const button = event.relatedTarget;
-                if (button?.dataset?.placeId) {
-                    const modalBody = bsModal.querySelector('.modal-body');
-                    const modalTitle = bsModal.querySelector('.modal-title');
-                    modalTitle.textContent = 'Edit place name';
+            this.#DialogElement.removeDialogContents();
+            this.#DialogElement.setDialogContents('Edit place name', null);
 
-                    const nodes = modalBody.childNodes;
-                    // remove everything except loading element. ----------------------
-                    // remove element nodes first.
-                    nodes.forEach((elm) => {
-                        if (elm.nodeType === Node.ELEMENT_NODE && elm.id !== 'pmtl-bs-modal-loading') {
-                            elm.remove();
-                        }
-                    });
-                    // then remove non-element nodes.
-                    nodes.forEach((elm) => {
-                        if (elm.nodeType !== Node.ELEMENT_NODE) {
-                            elm.parentNode.removeChild(elm)
-                        }
-                    });
-                    // end remove everything except loading element. ------------------
+            // AJAX get edit place name form and its data.
+            this.#ajaxGetEditPlaceNameForm(thisTarget.dataset.placeId)
+            .then((response) => {
+                this.#DialogElement.setDialogContents(null, response?.result?.htmlForm);
+            });
 
-                    // AJAX get edit place name form and its data.
-                    this.#ajaxGetEditPlaceNameForm(button.dataset.placeId)
-                    .then((response) => {
-                        loadingP.classList.add('d-none');
-
-                        modalBody.insertAdjacentHTML('beforeend', response?.result?.htmlForm);
-                    });
-                }
-            });// end event listener show.bs.modal
-
-            // make rendered form auto focus.
+            // set focus on the form in the dialog element.
+            const bsModal = document.getElementById(this.#DialogElement.bootstrapDialogId);
             bsModal.addEventListener('shown.bs.modal', () => {
                 bsModal.querySelector('#place_name')?.focus();
             });// end event listener shown.bs.modal
-        }
+        });
     }// #listenClickEditPlaceName
 
 
@@ -322,9 +315,6 @@ class Index {
                     'body': new URLSearchParams(formData),
                     'content-type': 'application/x-www-form-urlencoded',
                 };
-                const modalDialogHTML = document.getElementById('pmtl-bs-modal');
-                const bsModal = bootstrap.Modal.getInstance(modalDialogHTML);
-
                 Ajax.fetchPost(appBasePath + '/HTTP/edit-placename-save.php', fetchOptions)
                 .then((response) => {
                     if (response?.result?.success && response.result.success === true) {
@@ -332,7 +322,7 @@ class Index {
                         document.querySelectorAll('.place-title-placement.place-id-' + placeIdInput?.value)?.forEach((item) => {
                             item.innerText = placeNameInput?.value;
                         });
-                        bsModal?.hide();
+                        this.#DialogElement.closeDialog(true);
                     } else {
                         // if failed.
                     }

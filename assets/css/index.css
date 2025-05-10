@@ -141,6 +141,7 @@ body {
 #pmtl-listing-panel .buttons-controls .btn {
     border-radius: 0;
 }
+/* override Bootstrap default `.btn` with `:active` will be black border. */
 #pmtl-listing-panel .buttons-controls .btn:active,
 #pmtl-listing-panel .pmtl-timeline-panel-select-date-row .btn:active {
     border-color: transparent;

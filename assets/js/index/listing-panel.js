@@ -195,6 +195,8 @@ class ListingPanel {
     /**
      * Close the listing panel.
      * 
+     * This method must be able to call from outside this class.
+     * 
      * @returns {undefined}
      */
     closePanel() {
@@ -236,6 +238,8 @@ class ListingPanel {
     /**
      * Open the listing panel.
      * 
+     * This method must be able to call from outside this class.
+     * 
      * @returns {undefined}
      */
     openPanel() {
@@ -254,6 +258,8 @@ class ListingPanel {
 
     /**
      * Set panel contents.
+     * 
+     * This method must be able to call from outside this class.
      * 
      * @param {String|Object} contents The contents to set into listing panel contents placeholder.
      * @returns {undefined}
