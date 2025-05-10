@@ -118,6 +118,24 @@ class TimelinePanel {
 
 
     /**
+     * Dispatch event on date input to load timeline data.
+     * 
+     * This method was called from `openTimelinePanel()`, `#changeDateOnTimeline()`, `#listenClickNextPrevDate()`.
+     */
+    #dispatchEventOnDateInputToLoadData() {
+        const timelineDateInput = document.getElementById(this.#timelineDateInputId);
+        if (timelineDateInput?.value) {
+            const event = new KeyboardEvent('keydown', {
+                bubbles: true,
+                code: 'Enter',
+                key: 'Enter',
+            });
+            timelineDateInput.dispatchEvent(event);
+        }
+    }// #dispatchEventOnDateInputToLoadData
+
+
+    /**
      * Display timeline data. This will not draw anything on the maps. To draw data on the maps, use `LibMaps.drawTimelineData()`.
      * 
      * This method was called from `#ajaxGetTimelineData()`.
@@ -290,30 +308,16 @@ class TimelinePanel {
             const dateInput = document.getElementById(this.#timelineDateInputId);
             const dateInputDateObj = new Date(dateInput.value);
 
-            /**
-             * Trigger enter event on the input date.
-             * 
-             * @returns {undefined}
-             */
-            function triggerEnterEvent() {
-                const event = new KeyboardEvent('keydown', {
-                    bubbles: true,
-                    code: 'Enter',
-                    key: 'Enter',
-                });
-                dateInput.dispatchEvent(event);
-            }// triggerEnterEvent
-
             if ('prev' === buttonDirection) {
                 // if clicking on previous.
                 dateInputDateObj.setDate(dateInputDateObj.getDate() - 1);
                 dateInput.value = Utils.formatDate(dateInputDateObj);
-                triggerEnterEvent();
+                this.#dispatchEventOnDateInputToLoadData();
             } else if ('next' === buttonDirection) {
                 // if clicking on next.
                 dateInputDateObj.setDate(dateInputDateObj.getDate() + 1);
                 dateInput.value = Utils.formatDate(dateInputDateObj);
-                triggerEnterEvent();
+                this.#dispatchEventOnDateInputToLoadData()
             }
         });
     }// #listenClickNextPrevDate
@@ -400,14 +404,7 @@ class TimelinePanel {
                     if (event.key === 'Enter' || event.key === 'Escape') {
                         return ;
                     }
-                    const timelineDateInput = document.getElementById(this.#timelineDateInputId);
-
-                    const kEvent = new KeyboardEvent('keydown', {
-                        bubbles: true,
-                        code: 'Enter',
-                        key: 'Enter',
-                    });
-                    timelineDateInput.dispatchEvent(kEvent);
+                    this.#dispatchEventOnDateInputToLoadData();
                 }
             }, 
             500
@@ -416,13 +413,7 @@ class TimelinePanel {
         document.addEventListener('change', delay(
             (event) => {
                 if (event?.target?.getAttribute('id') === this.#timelineDateInputId) {
-                    const timelineDateInput = document.getElementById(this.#timelineDateInputId);
-                    const event = new KeyboardEvent('keydown', {
-                        bubbles: true,
-                        code: 'Enter',
-                        key: 'Enter',
-                    });
-                    timelineDateInput.dispatchEvent(event);
+                    this.#dispatchEventOnDateInputToLoadData();
                 }
             }, 
             500
@@ -443,28 +434,6 @@ class TimelinePanel {
 
 
     /**
-     * Opened panel then load timeline data.
-     * 
-     * This method was called from `#listenClickOpenTimelinePanel()`.
-     */
-    #openPanelLoadTimelineData() {
-        if (false !== IndexJSObject.loadSelectedDate) {
-            return null;
-        }
-
-        const timelineDateInput = document.getElementById(this.#timelineDateInputId);
-        if (timelineDateInput?.value) {
-            const event = new KeyboardEvent('keydown', {
-                bubbles: true,
-                code: 'Enter',
-                key: 'Enter',
-            });
-            timelineDateInput.dispatchEvent(event);
-        }
-    }// #openPanelLoadTimelineData
-
-
-    /**
      * Change date on the timeline and dispatch event to make AJAX call.
      * 
      * This method must be able to call from outside this class.
@@ -480,12 +449,7 @@ class TimelinePanel {
         const inputDate = document.getElementById(this.#timelineDateInputId);
         inputDate.value = dateValue;
 
-        const kEvent = new KeyboardEvent('keydown', {
-            bubbles: true,
-            code: 'Enter',
-            key: 'Enter',
-        });
-        inputDate.dispatchEvent(kEvent);
+        this.#dispatchEventOnDateInputToLoadData();
     }// changeDateOnTimeline
 
 
@@ -564,7 +528,7 @@ class TimelinePanel {
 
         // do open the timeline panel.
         this.#ListingPanel.openPanel();
-        this.#openPanelLoadTimelineData();
+        this.#dispatchEventOnDateInputToLoadData();
     }// openTimelinePanel
 
 
