@@ -12,6 +12,7 @@ require 'vendor/autoload.php';
 
 
 $Url = new \PMTL\Libraries\Url();
+$Assets = new \PMTL\Libraries\Assets($Url);
 $htmlTitle = 'Personal maps help'; // customize html title for each page.
 include 'HTTP/common/html-head.php';
 ?>
@@ -46,4 +47,4 @@ include 'HTTP/common/html-head.php';
         </div>
 <?php
 include 'HTTP/common/html-foot.php';
-unset($htmlTitle, $Url);
+unset($Assets, $htmlTitle, $Url);
