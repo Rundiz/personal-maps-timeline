@@ -155,12 +155,14 @@ class ListingPanel {
             delay = 200;
         }
 
+        // slice the delay into pieces to prevent/reduce wobble effect (like a jelly shake) on the maps. this can be happened on the large screen.
         const minDelayEach = 50;
         let totalRound = 1;
         if (delay > minDelayEach) {
             totalRound = Math.floor(delay / minDelayEach);
         }
 
+        let timeoutIDs = {};
         let round = 1;
         for (round = 1; round <= totalRound; ++round) {
             let eachDelay = minDelayEach * round;
@@ -168,10 +170,12 @@ class ListingPanel {
                 eachDelay = delay;
             }
 
-            setTimeout(() => {
+            timeoutIDs[eachDelay] = setTimeout(() => {
                 this.#LibMaps.updateMap();
+                clearTimeout(timeoutIDs[eachDelay]);
             }, eachDelay);
         }// endfor;
+        timeoutIDs = {};
 
         if ((minDelayEach * totalRound) < delay) {
             setTimeout(() => {
