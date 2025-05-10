@@ -16,7 +16,8 @@
 2. แตกไฟล์ออกบนตำแหน่งที่สามารถเรียกใช้ผ่าน web server และ PHP ได้.
 
 ###  ขั้นตอนติดตั้งลำดับต่อมา
-หลังจากเลือกว่าจะติดตั้งโดยใช้วิธีใดแล้ว ลำดับต่อมาให้ทำดังต่อไปนี้.
+หลังจากเลือกว่าจะติดตั้งโดยใช้วิธีใดแล้ว ลำดับต่อมาให้ทำดังต่อไปนี้. เครื่องของคุณต้องมี[โปรแกรม Composer](https://getcomposer.org/) ติดตั้งพร้อมไว้ก่อนอยู่แล้ว.
+
 1. สร้างฐานข้อมูลบน MariaDB, MySQL แล้วนำเข้าไฟล์ mariadb-structure.sql.
 2. คัดลอกไฟล์ default.config.php ไปเป็นไฟล์ config.php แล้วแก้ไขตั้งค่าต่างๆ.
 3. รันคำสั่ง `composer install`.
@@ -33,7 +34,7 @@
 1. ให้ดำเนินการดาวน์โหลดโดยวิธีเดียวกันกับขั้นตอนการติดตั้ง แล้วแตกไฟล์ออกมาทับในตำแหน่งเดิม โดยอาจจะลบไฟล์เก่าทั้งหมดก่อน ยกเว้นไฟล์ config.php เอาไว้ จากนั้นจึงค่อยแตกไฟล์ออกมา.
 
 ### ขั้นตอนอัปเดทลำดับต่อมา
-ไม่ว่าจะดำเนินการติดตั้งหรืออัปเดทด้วยวิธีใด ขั้นตอนสุดท้ายนี้สำคัญเสมอ. เครื่องของคุณต้องติดตั้ง[โปรแกรม Composer](https://getcomposer.org/) เอาไว้อยู่ก่อนแล้ว.
+ไม่ว่าจะดำเนินการติดตั้งหรืออัปเดทด้วยวิธีใด ขั้นตอนสุดท้ายนี้สำคัญเสมอ. 
 
 1. รันคำสั่ง `composer update`.
 
@@ -55,23 +56,24 @@ Installing using git command is the recommended method because it will be easier
 2. Extract the file to a location where it can be called via web server and PHP.
 
 ### Subsequent installation steps
-After choosing which method to install, do the following.
+After choosing which installation method to use, do the following. Your machine must have [Composer program](https://getcomposer.org/) installed beforehand.
+
 1. Create a database on MariaDB, MySQL and import the mariadb-structure.sql file.
 2. Copy the default.config.php file to the config.php file and edit the settings.
 3. Run the `composer install` command.
 
 ## Update
 
-### Update by installing using git
-If you installed using git, you can perform automatic updates as follows.
+### Update using git installation
+If you installed via git, you can perform automatic updates as follows.
 
 1. Run the `git pull` command.
 
-### Update by installing using normal download
+### Update using normal download installation
 
 1. Download the same way as the installation steps and extract the files to the original location. You may want to delete all the old files first, except for the config.php file, and then extract the files.
 
-### Next update steps
-Whether you install or update using any method, this last step is always important. Your machine must have [Composer](https://getcomposer.org/) installed.
+### Subsequent update steps
+No matter which installation or update method you use, this last step is always important.
 
 1. Run the `composer update` command.
