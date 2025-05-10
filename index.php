@@ -12,9 +12,10 @@ require 'vendor/autoload.php';
 
 
 $Url = new \PMTL\Libraries\Url();
+$Assets = new \PMTL\Libraries\Assets($Url);
 $htmlTitle = null; // customize html title for each page.
-$customHTMLHead = '<link rel="stylesheet" href="' . $Url->getAppBasePath() . '/assets/css/index.css">
-<link rel="stylesheet" href="' . $Url->getAppBasePath() . '/assets/vendor/leaflet/leaflet.css?v=1.9.4">';
+$customHTMLHead = '<link rel="stylesheet" href="' . $Assets->assetUrl('assets/css/index.css') . '">
+<link rel="stylesheet" href="' . $Assets->assetUrl('assets/vendor/leaflet/leaflet.css', ['v' => '1.9.4']) . '">';
 include 'HTTP/common/html-head.php';
 $navbarExpand = 'md';
 ?>
@@ -119,15 +120,15 @@ $navbarExpand = 'md';
             };
         </script>
 <?php
-$customHTMLFoot = '<script src="' . $Url->getAppBasePath() . '/assets/vendor/leaflet/leaflet.js?v=1.9.4"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/libraries/ajax.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/libraries/mapsUtil.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/libraries/utils.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/libraries/maps/libMapsLeaflet.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/index/dialog-element.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/index/listing-panel.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/index/timeline-panel.js"></script>
-<script src="' . $Url->getAppBasePath() . '/assets/js/index.js"></script>';
+$customHTMLFoot = '<script src="' . $Assets->assetUrl('/assets/vendor/leaflet/leaflet.js', ['v' => '1.9.4']) . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/libraries/ajax.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/libraries/mapsUtil.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/libraries/utils.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/libraries/maps/libMapsLeaflet.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/index/dialog-element.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/index/listing-panel.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/index/timeline-panel.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/index.js') . '"></script>';
 include 'HTTP/common/html-foot.php';
 unset($customHTMLFoot, $customHTMLHead);
-unset($htmlTitle, $Url);
+unset($Assets, $htmlTitle, $Url);
