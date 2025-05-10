@@ -43,6 +43,12 @@ class TimelinePanel {
 
 
     /**
+     * @var {String} #timelinePanelContainerTemplateId Timeline panel container template ID.
+     */
+    #timelinePanelContainerTemplateId = 'pmtl-timeline-panel-template';
+
+
+    /**
      * @var {String} #timelinePanelContentPlaceholderId Timeline content placeholder ID.
      */
     #timelinePanelContentPlaceholderId = 'pmtl-timeline-panel-content-placeholder';
@@ -84,6 +90,31 @@ class TimelinePanel {
             return Promise.resolve(response);
         });
     }// #ajaxGetTimelineData
+
+
+    /**
+     * Copy timeline panel container that is in `template` tag into listing panel contents element.
+     * 
+     * This method was called from `openTimelinePanel()`.
+     * 
+     * @returns {undefined}
+     */
+    #copyTimelinePanelContainerTemplateToListingPanel() {
+        const listingPanelContents = document.getElementById(this.#Index.ListingPanel.listingPanelContentsId);
+        if (listingPanelContents.querySelector('.pmtl-timeline-panel-container')) {
+            // if already copied to listing panel contents.
+            // do nothing here.
+            return ;
+        }
+
+        const timelinePanelContainerTemplate = document.getElementById(this.#timelinePanelContainerTemplateId);
+        const timelinePanelCloned = timelinePanelContainerTemplate.content.cloneNode(true);
+        this.#Index.ListingPanel.setPanelContents(timelinePanelCloned);
+
+        const inputDate = document.getElementById(this.#timelineDateInputId);
+        inputDate.setAttribute('min', IndexJSObject.ajaxGetSummary.recordDates.sinceDate);
+        inputDate.setAttribute('max', IndexJSObject.ajaxGetSummary.recordDates.latestDate);
+    }// #copyTimelinePanelContainerTemplateToListingPanel
 
 
     /**
@@ -238,6 +269,24 @@ class TimelinePanel {
                 thisTarget = thisTarget.closest('button');
             }
 
+            let isNextPreviousDateBtn = false;
+            let buttonDirection = null;
+            if (thisTarget.getAttribute('id') === 'pmtl-timeline-control-date-previous') {
+                // if clicking on previous.
+                isNextPreviousDateBtn = true;
+                buttonDirection = 'prev';
+            } else if (thisTarget.getAttribute('id') === 'pmtl-timeline-control-date-next') {
+                // if clicking on next.
+                isNextPreviousDateBtn = true;
+                buttonDirection = 'next';
+            }
+
+            if (false === isNextPreviousDateBtn) {
+                return ;
+            } else {
+                event.preventDefault();
+            }
+
             const dateInput = document.getElementById(this.#timelineDateInputId);
             const dateInputDateObj = new Date(dateInput.value);
 
@@ -255,15 +304,13 @@ class TimelinePanel {
                 dateInput.dispatchEvent(event);
             }// triggerEnterEvent
 
-            if (thisTarget.getAttribute('id') === 'pmtl-timeline-control-date-previous') {
+            if ('prev' === buttonDirection) {
                 // if clicking on previous.
-                event.preventDefault();
                 dateInputDateObj.setDate(dateInputDateObj.getDate() - 1);
                 dateInput.value = Utils.formatDate(dateInputDateObj);
                 triggerEnterEvent();
-            } else if (thisTarget.getAttribute('id') === 'pmtl-timeline-control-date-next') {
+            } else if ('next' === buttonDirection) {
                 // if clicking on next.
-                event.preventDefault();
                 dateInputDateObj.setDate(dateInputDateObj.getDate() + 1);
                 dateInput.value = Utils.formatDate(dateInputDateObj);
                 triggerEnterEvent();
@@ -288,12 +335,7 @@ class TimelinePanel {
                     this.closeTimelinePanel();
                 } else {
                     // if timeline panel is not opened.
-                    // clear all actived items on navmenu.
-                    this.#Index.clearAllActiveNavItems();
-
-                    selectDateMenuLink.classList.add('active');
-                    this.#ListingPanel.openPanel();
-                    this.#openPanelLoadTimelineData();
+                    this.openTimelinePanel();
                 }
             });
         }
@@ -340,11 +382,10 @@ class TimelinePanel {
             }
         }// delay
 
-        const timelineDateInput = document.getElementById(this.#timelineDateInputId);
-
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' && event?.target?.getAttribute('id') === this.#timelineDateInputId) {
                 event.preventDefault();
+                const timelineDateInput = document.getElementById(this.#timelineDateInputId);
                 if (timelineDateInput.value !== IndexJSObject.loadSelectedDate) {
                     // if not yet loaded.
                     // make ajax call to get timeline data.
@@ -359,6 +400,7 @@ class TimelinePanel {
                     if (event.key === 'Enter' || event.key === 'Escape') {
                         return ;
                     }
+                    const timelineDateInput = document.getElementById(this.#timelineDateInputId);
 
                     const kEvent = new KeyboardEvent('keydown', {
                         bubbles: true,
@@ -374,6 +416,7 @@ class TimelinePanel {
         document.addEventListener('change', delay(
             (event) => {
                 if (event?.target?.getAttribute('id') === this.#timelineDateInputId) {
+                    const timelineDateInput = document.getElementById(this.#timelineDateInputId);
                     const event = new KeyboardEvent('keydown', {
                         bubbles: true,
                         code: 'Enter',
@@ -422,8 +465,34 @@ class TimelinePanel {
 
 
     /**
+     * Change date on the timeline and dispatch event to make AJAX call.
+     * 
+     * This method must be able to call from outside this class.
+     * 
+     * @param {string} dateValue The date value.
+     * @returns {undefined}
+     */
+    changeDateOnTimeline(dateValue) {
+        if (typeof(dateValue) !== 'string') {
+            throw new Error('The argument `dateValue` must be a date value.');
+        }
+
+        const inputDate = document.getElementById(this.#timelineDateInputId);
+        inputDate.value = dateValue;
+
+        const kEvent = new KeyboardEvent('keydown', {
+            bubbles: true,
+            code: 'Enter',
+            key: 'Enter',
+        });
+        inputDate.dispatchEvent(kEvent);
+    }// changeDateOnTimeline
+
+
+    /**
      * Close timeline panel and also clear timeline layer group.
      * 
+     * This method was called from `#listenClickOpenTimelinePanel()`, `#listenListingPanelClickClose()`.  
      * This method must be able to call from outside this class.
      */
     closeTimelinePanel() {
@@ -465,6 +534,38 @@ class TimelinePanel {
         this.#listenClickNextPrevDate();
         this.#listenClickTimelineItem();
     }// init
+
+
+    /**
+     * Open timeline panel (based on listing panel).
+     * 
+     * This method will clear all active nav items, add active class to timeline navbar item, open timeline panel.
+     * 
+     * This method was called from `#listenClickOpenTimelinePanel()`.  
+     * This method must be able to call from outside this class.
+     * 
+     * @param {string|null} dateValue Set valid date value for example 'YYYY-MM-DD' or set to empty string to set date input value. Leave `null` for not change date input value.
+     * @returns {undefined}
+     */
+    openTimelinePanel(dateValue = null) {
+        // clear all actived items on navmenu.
+        this.#Index.clearAllActiveNavItems();
+
+        this.#copyTimelinePanelContainerTemplateToListingPanel();
+
+        if (typeof(dateValue) === 'string') {
+            const inputDate = document.getElementById(this.#timelineDateInputId);
+            inputDate.value = dateValue;
+        }
+
+        // add active class to select a date on the navbar item (navmenu).
+        const selectDateMenuLink = document.getElementById(this.#openTimelinePanelLinkId);
+        selectDateMenuLink.classList.add('active');
+
+        // do open the timeline panel.
+        this.#ListingPanel.openPanel();
+        this.#openPanelLoadTimelineData();
+    }// openTimelinePanel
 
 
 }// TimelinePanel

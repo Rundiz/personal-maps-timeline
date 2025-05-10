@@ -347,23 +347,14 @@ class LibMaps {
                 }
                 const lvdDate = new Date(lastVisitDate);
 
-                // set input date value.
-                const inputDate = document.getElementById(this.#Index.TimelinePanel.timelineDateInputId);
-                inputDate.value = Utils.formatDate(lvdDate);
-
-                // trigger open timeline panel.
+                // open timeline panel or change the date based on clicked year visited.
                 const selectDateMenuLink = document.getElementById(this.#Index.TimelinePanel.openTimelinePanelLinkId);
                 if (!selectDateMenuLink.classList.contains('active')) {
                     // if not opened.
-                    selectDateMenuLink.dispatchEvent(new Event('click'));
+                    this.#Index.TimelinePanel.openTimelinePanel(Utils.formatDate(lvdDate));
                 } else {
                     // if already opened.
-                    const kEvent = new KeyboardEvent('keydown', {
-                        bubbles: true,
-                        code: 'Enter',
-                        key: 'Enter',
-                    });
-                    inputDate.dispatchEvent(kEvent);
+                    this.#Index.TimelinePanel.changeDateOnTimeline(Utils.formatDate(lvdDate));
                 }
             }
         });

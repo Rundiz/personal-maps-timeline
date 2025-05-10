@@ -19,7 +19,14 @@ class ListingPanel {
 
 
     /**
-     * @type String Listing panel ID.
+     * 
+     * @type {String} Listing panel contents ID.
+     */
+    #listingPanelContentsId = 'pmtl-listing-panel-contents';
+
+
+    /**
+     * @type {String} Listing panel ID.
      */
     #listingPanelId = 'pmtl-listing-panel';
 
@@ -208,6 +215,14 @@ class ListingPanel {
 
 
     /**
+     * @type {String} Listing panel contents ID.
+     */
+    get listingPanelContentsId() {
+        return this.#listingPanelContentsId;
+    }// listingPanelContentsId
+
+
+    /**
      * Initialize the class.
      * 
      * @returns {undefined}
@@ -235,6 +250,29 @@ class ListingPanel {
             this.#updateMaps();
         }// endif;
     }// openPanel
+
+
+    /**
+     * Set panel contents.
+     * 
+     * @param {String|Object} contents The contents to set into listing panel contents placeholder.
+     * @returns {undefined}
+     */
+    setPanelContents(contents) {
+        if (typeof(contents) !== 'string' && typeof(contents) !== 'object') {
+            throw new Error('The argument `contents` must be string or an object that supported by `appendChild()`.');
+        }
+
+        const listingPanelContents = document.getElementById(this.#listingPanelContentsId);
+
+        listingPanelContents.innerHTML = '';
+
+        if (typeof(contents) === 'string') {
+            listingPanelContents.innerHTML = contents;
+        } else if (typeof(contents) === 'object') {
+            listingPanelContents.appendChild(contents);
+        }
+    }// setPanelContents
 
 
 }// ListingPanel

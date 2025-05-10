@@ -50,27 +50,8 @@ $navbarExpand = 'md';
                         <button id="pmtl-listing-panel-maxmin-btn" class="btn maxmin-controls" type="button" title="Minimize or maximize this panel"><i class="fa-regular fa-window-restore"></i></button>
                         <button id="pmtl-listing-panel-close-btn" class="btn close-controls" type="button" title="Close this panel"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                </div>
-                <div class="pmtl-timeline-panel-container container-fluid">
-                    <div class="pmtl-timeline-panel-select-date-row row g-0 mb-2 align-items-center">
-                        <div class="col-2 text-start">
-                            <button id="pmtl-timeline-control-date-previous" class="btn btn-sm" type="button">
-                                <i class="fa-solid fa-angle-left"></i>
-                            </button>
-                        </div>
-                        <div class="col text-center">
-                            <input id="pmtl-timeline-control-date-input" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
-                        </div>
-                        <div class="col-2 text-end">
-                            <button id="pmtl-timeline-control-date-next" class="btn btn-sm" type="button">
-                                <i class="fa-solid fa-angle-right"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="pmtl-timeline-panel-content-row row">
-                        <div id="pmtl-timeline-panel-content-placeholder"></div>
-                    </div>
-                </div>
+                </div><!-- .controls-row -->
+                <div id="pmtl-listing-panel-contents"></div><!-- #pmtl-listing-panel-contents -->
             </div><!-- #pmtl-listing-panel -->
 
             <!-- modal dialog below is for task such as edit place name. -->
@@ -90,12 +71,51 @@ $navbarExpand = 'md';
 
         </div><!-- .pmtl-contents -->
 
+        <template id="pmtl-timeline-panel-template">
+            <div class="pmtl-timeline-panel-container container-fluid">
+                <div class="pmtl-timeline-panel-select-date-row row g-0 mb-2 align-items-center">
+                    <div class="col-2 text-start">
+                        <button id="pmtl-timeline-control-date-previous" class="btn btn-sm" type="button">
+                            <i class="fa-solid fa-angle-left"></i>
+                        </button>
+                    </div>
+                    <div class="col text-center">
+                        <input id="pmtl-timeline-control-date-input" type="date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+                    </div>
+                    <div class="col-2 text-end">
+                        <button id="pmtl-timeline-control-date-next" class="btn btn-sm" type="button">
+                            <i class="fa-solid fa-angle-right"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="pmtl-timeline-panel-content-row row">
+                    <div id="pmtl-timeline-panel-content-placeholder"></div>
+                </div>
+            </div>
+        </template><!-- #pmtl-timeline-panel-template -->
+
         <script>
             const appBasePath = '<?php echo $Url->getAppBasePath(); ?>';
             let IndexJSObject = {
+                /**
+                 * @type {Object} The AJAX get summary result object. Usually it stored `recordDates.sinceDate`, `recordDates.latestDate` properties inside. Item was set from index.js -> `#ajaxGetSummary()`.
+                 */
+                'ajaxGetSummary': {},
+
+                /**
+                 * @type {Boolean} For check that default maps was laded or not. Default is `false` or not loaded.
+                 */
                 'defaultMapsLoaded': false,
+
+                /**
+                 * @type {String|false} For store selected date that was loaded with AJAX timeline data. By default it was marked as `false` or means data was not loaded yet. Item was set from timeline-panel.js -> `#ajaxGetTimelineData()`.
+                 */
                 'loadSelectedDate': false,
-                'summaryDateSelectedYear': null,// from summary date > dropdown > year selected.
+
+                /**
+                 * @type {Number|null} For set selected year from summary date on the navbar item.
+                 */
+                'summaryDateSelectedYear': null,
             };
         </script>
 <?php

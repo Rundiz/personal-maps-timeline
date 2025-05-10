@@ -82,9 +82,7 @@ class Index {
                 summaryDateHTML += '</li>';
                 navbarNav.insertAdjacentHTML('beforeend', summaryDateHTML);
 
-                const inputDate = document.getElementById('pmtl-timeline-control-date-input');
-                inputDate.setAttribute('min', response.recordDates.sinceDate);
-                inputDate.setAttribute('max', response.recordDates.latestDate);
+                IndexJSObject.ajaxGetSummary.recordDates = response.recordDates;
             }
 
             if (typeof(response?.totalVisit) === 'object') {
@@ -392,6 +390,16 @@ class Index {
         // also reset selected year on the JS object to `null`.
         IndexJSObject.summaryDateSelectedYear = null;
     }// clearAllActiveNavItems
+
+
+    /**
+     * Get ListingPanel class.
+     * 
+     * @type {ListingPanel} Listing panel class instance.
+     */
+    get ListingPanel() {
+        return this.#ListingPanel;
+    }// ListingPanel
 
 
     /**

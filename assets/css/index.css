@@ -175,13 +175,13 @@ body {
     padding-right: 10px;
 }
 
-.pmtl-timeline-panel-container {
+#pmtl-listing-panel-contents {
     height: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
 }
 @media(min-width: 768px) {
-    .pmtl-timeline-panel-container {
+    #pmtl-listing-panel-contents {
         padding-top: 15px;
     }
 }
