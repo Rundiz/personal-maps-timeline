@@ -91,7 +91,7 @@ class Index {
                 + '</a></li>';
                 for (let i = response.recordDates.sinceYear; i <= response.recordDates.latestYear; ++i) {
                     summaryDateHTML += '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="' + i + '">' + i;
-                    summaryDateHTML += ' <small class="text-secondary fw-light" title="Total visits" aria-label="Total visits">(' + response.summaryPerYear[i]?.totalVisitU + ')</small>';
+                    summaryDateHTML += ' <small class="fw-light" title="Total visits" aria-label="Total visits">(' + response.summaryPerYear[i]?.totalVisitU + ')</small>';
                     summaryDateHTML += '</a>';
                     summaryDateHTML += '</li>';
                 }
