@@ -43,6 +43,31 @@ if (is_object($row) && is_string($row->minDateTime) && is_string($row->maxDateTi
 unset($row);
 // end summary oldest and newest date/time. ===================================
 
+$sql = 'SELECT COUNT(DISTINCT `topCandidate_placeLocation_latLng`) AS `totalVisitU`
+    , COUNT(`topCandidate_placeLocation_latLng`) AS `totalVisit` 
+    , YEAR(`s`.`startTime`) AS `startYear`
+    FROM `visit`
+    INNER JOIN `semanticsegments` AS `s` ON `visit`.`segment_id` = `s`.`id`
+    WHERE YEAR(`startTime`) >= :sinceYear AND YEAR(`endTime`) <= :latestYear
+    GROUP BY YEAR(`startTime`)';
+$Sth = $dbh->prepare($sql);
+unset($sql);
+$Sth->bindValue(':sinceYear', $output['recordDates']['sinceYear']);
+$Sth->bindValue(':latestYear', $output['recordDates']['latestYear']);
+$Sth->execute();
+$result = $Sth->fetchAll();
+$Sth->closeCursor();
+unset($Sth);
+if ($result) {
+    $summaryPerYear = new \stdClass();
+    foreach ($result as $row) {
+        $summaryPerYear->{$row->startYear} = $row;
+    }// endforeach;
+    unset($row);
+    $output['summaryPerYear'] = $summaryPerYear;
+}
+unset($result);
+
 // summary total visits. ======================================================
 $sql = 'SELECT COUNT(DISTINCT `topCandidate_placeLocation_latLng`) AS `totalVisitU`
     , COUNT(`topCandidate_placeLocation_latLng`) AS `totalVisit` 

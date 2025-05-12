@@ -86,25 +86,20 @@ class Index {
                 + response.recordDates.sinceYear + ' - ' + response.recordDates.latestDate
                 + '</a>'
                 + '<ul class="dropdown-menu">'
-                + '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="*">All</a></li>';
+                + '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="*">All'
+                + ' <small class="text-secondary fw-light" title="Total visits" aria-label="Total visits">(' + response.totalVisit.unique + ')</small>'
+                + '</a></li>';
                 for (let i = response.recordDates.sinceYear; i <= response.recordDates.latestYear; ++i) {
-                    summaryDateHTML += '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="' + i + '">' + i + '</a></li>';
+                    summaryDateHTML += '<li><a class="pmtl-nav-summary-date-eachyear dropdown-item" data-year="' + i + '">' + i;
+                    summaryDateHTML += ' <small class="text-secondary fw-light" title="Total visits" aria-label="Total visits">(' + response.summaryPerYear[i]?.totalVisitU + ')</small>';
+                    summaryDateHTML += '</a>';
+                    summaryDateHTML += '</li>';
                 }
                 summaryDateHTML += '</ul>';
                 summaryDateHTML += '</li>';
                 navbarNav.insertAdjacentHTML('beforeend', summaryDateHTML);
 
                 IndexJSObject.ajaxGetSummary.recordDates = response.recordDates;
-            }
-
-            if (typeof(response?.totalVisit) === 'object') {
-                let summaryDateHTML = '<li class="nav-item">'
-                + '<span class="nav-link navbar-text">'
-                + 'Total visits: '
-                + '<span id="pmtl-nav-total-visit" data-total-value="' + response.totalVisit.unique + '">' + response.totalVisit.unique + '</span>'
-                + '</span>'
-                + '</li>';
-                navbarNav.insertAdjacentHTML('beforeend', summaryDateHTML);
             }
 
             if (typeof(response.visitedPlaces) === 'object') {
