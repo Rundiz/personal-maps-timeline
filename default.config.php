@@ -21,6 +21,10 @@ define('DB_PASSWORD', '');
 $jsonFolder = '';// path to your folder that contain exported Google Maps timeline JSON files.
 $jsonFile = null;// set to `null` to use all files.
 
+// Your default map center.
+// 13.351245, 101.466092 is look like the center of Thailand in views.
+define('DEFAULT_MAP_CENTER', [13.351245, 101.466092]);
+
 // Google Maps place API key.
 // This is for use with some features that require Google API such as retrieve place detail from Google Maps based on its place ID.
 // You can leave this empty.

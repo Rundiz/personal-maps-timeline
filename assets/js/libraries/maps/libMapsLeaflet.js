@@ -658,8 +658,7 @@ class LibMaps {
         if (window.innerWidth >= 500 && window.innerHeight >= 600) {
             mapZoom = 6;
         }
-        // 13.351245, 101.466092 is look like the center of Thailand in views.
-        const defaultMapCenter = [13.351245, 101.466092];
+        const defaultMapCenter = IndexJSObject.defaultMapCenter;
 
         // set map layers. ----------------------------------------------
         const mapLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

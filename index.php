@@ -104,6 +104,16 @@ $navbarExpand = 'md';
                 'ajaxGetSummary': {},
 
                 /**
+                 * @type {float[]} For use as default map center.
+                 */
+                'defaultMapCenter': <?php 
+                if (!defined('DEFAULT_MAP_CENTER')) {
+                    define('DEFAULT_MAP_CENTER', [13.351245, 101.466092]);
+                }
+                echo '[' . DEFAULT_MAP_CENTER[0] . ', ' . DEFAULT_MAP_CENTER[1] . ']';
+                ?>,
+
+                /**
                  * @type {Boolean} For check that default maps was laded or not. Default is `false` or not loaded.
                  */
                 'defaultMapsLoaded': false,
