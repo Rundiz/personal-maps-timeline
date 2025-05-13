@@ -69,6 +69,35 @@ class Db
 
 
     /**
+     * Bind multiple values.
+     * 
+     * @param \PDOStatement $Sth The PDO statement class.
+     * @param array $bindValues Bind values associative array. The key is `param`, and accepted `value` and `type` as sub keys. Example:<pre>
+     *      array(
+     *          ':year' => array(
+     *              'value' => 2025,
+     *              'type' => \PDO::PARAM_INT,
+     *          ),
+     *          ':date' => array(
+     *              'value' => '2025-01-20',
+     *          ),
+     *      )
+     * </pre>
+     */
+    public function bindValues(\PDOStatement $Sth, array $bindValues)
+    {
+        foreach ($bindValues as $param => $item) {
+            if (isset($item['type'])) {
+                $Sth->bindValue($param, $item['value'], $item['type']);
+            } else {
+                $Sth->bindValue($param, $item['value']);
+            }
+        }// endforeach;
+        unset($item, $param);
+    }// bindValues
+
+
+    /**
      * Disconnect the database.
      *
      * @return void

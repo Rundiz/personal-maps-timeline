@@ -136,11 +136,11 @@ class LibMaps {
                 const newestDate = new Date(Math.max(...timelinePathsTimes));
                 polyline.bindPopup(
                     '<p><strong>Travel</strong></p>'
-                    + 'On <a class="marker-popup-year-visited" data-last-visit-date="' + Utils.formatDate(oldestDate) + '">' + Utils.formatDate(oldestDate)
+                    + 'On <a class="marker-popup-year-visited" data-pmtl-last-visit-date="' + Utils.formatDate(oldestDate) + '">' + Utils.formatDate(oldestDate)
                     + ' '
                     + Utils.formatTimeHM(oldestDate) + '</a>'
                     + ' - '
-                    + '<a class="marker-popup-year-visited" data-last-visit-date="' + Utils.formatDate(newestDate) + '">' + Utils.formatDate(newestDate)
+                    + '<a class="marker-popup-year-visited" data-pmtl-last-visit-date="' + Utils.formatDate(newestDate) + '">' + Utils.formatDate(newestDate)
                     + ' '
                     + Utils.formatTimeHM(newestDate) + '</a>',
                     {
@@ -219,7 +219,7 @@ class LibMaps {
 
 
     /**
-     * Draw visit marker.
+     * Draw visit marker. This marker will be show when user view timeline data base on selected date.
      * 
      * This method was called from `drawTimelineData()`.
      * 
@@ -266,10 +266,8 @@ class LibMaps {
                 ''
             )
             + '</p>'
-            + '<div>'
-            + '<small><a href="' + googleMapsURL + '" target="googlemaps">View on Google Maps</a></small>'
-            + ' <small><a href="' + googleMapsURLNoPlaceId + '" target="googlemaps" title="View by latitude, longitude only"><i class="fa-solid fa-map-pin"></i></a></small>'
-            + '</div>'
+            + '<div class="additional-content-placeholder"></div>'
+            + this.#getViewOnGoogleMapsLinks(item?.visit?.topCandidate_placeLocation_latLng, item?.visit?.topCandidate_placeId)
         );
         marker.on('popupopen', () => {
             marker.setIcon(markerIconHighlighted);
@@ -323,8 +321,29 @@ class LibMaps {
             return '';
         }
 
-        return ' <a class="pmtl-edit-placename" title="Edit place name" data-place-id="' + placeId + '" data-bs-toggle="modal" data-bs-target="#pmtl-bs-modal"><i class="fa-solid fa-pen"></i></a>';
+        return ' <a class="pmtl-edit-placename" title="Edit place name" data-pmtl-place-id="' + placeId + '" data-bs-toggle="modal" data-bs-target="#pmtl-bs-modal"><i class="fa-solid fa-pen"></i></a>';
     }// #getEditPlaceNameHTML
+
+
+    /**
+     * Get "View on Google Maps" links where the link is with and without place ID.
+     * 
+     * This method was called from `drawYearSummary()`, `setupDefaultMap()`, `#drawVisitMarker()`.
+     * 
+     * @param {String} topCandidate_placeLocation_latLng The data from column `topCandidate_placeLocation_latLng` on DB.
+     * @param {String} topCandidate_placeId The data from column `topCandidate_placeId` on DB.
+     * @returns {String} Return HTML of view on Google Maps.
+     */
+    #getViewOnGoogleMapsLinks(topCandidate_placeLocation_latLng, topCandidate_placeId) {
+        const latLngArray = MapsUtil.convertLatLngString(topCandidate_placeLocation_latLng);
+        const googleMapsURL = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','), topCandidate_placeId);
+        const googleMapsURLNoPlaceId = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','));
+
+        return '<div class="view-on-google-maps-links">'
+            + '<small><a href="' + googleMapsURL + '" target="googlemaps">View on Google Maps</a></small>'
+            + ' <small><a href="' + googleMapsURLNoPlaceId + '" target="googlemaps" title="View by latitude, longitude only"><i class="fa-solid fa-map-pin"></i></a></small>'
+            + '</div>';
+    }// #getViewOnGoogleMapsLinks
 
 
     /**
@@ -341,8 +360,9 @@ class LibMaps {
 
             if (thisTarget.classList.contains('marker-popup-year-visited')) {
                 event.preventDefault();
-                const lastVisitDate = thisTarget.dataset.lastVisitDate;
+                const lastVisitDate = thisTarget.dataset.pmtlLastVisitDate;
                 if (!lastVisitDate) {
+                    console.warn('There is no last visit date dataset specified.');
                     return ;
                 }
                 const lvdDate = new Date(lastVisitDate);
@@ -391,15 +411,17 @@ class LibMaps {
 
 
     /**
-     * Listen map popup open and display years visited. This means user clicked on marker of summary places (gray dots).
+     * Listen map popup opened and display view all visited history button (with summary of first and last visited years).
      * 
      * This method was called from `setupDefaultMap()`.
+     * 
+     * @returns {undefined}
      */
-    #listenMapPopupOpenDisplayYearsVisited() {
+    #listenMapPopupOpenDisplayViewAllVisitedHistoryLink() {
         this.#map.addEventListener('popupopen', (event) => {
             const additionalContentPlaceholder = event.popup?.getElement()?.querySelector('.additional-content-placeholder');
             if (!additionalContentPlaceholder) {
-                // if not found any additional content placeholder that will be use for display Years visited.
+                // if not found any additional content placeholder that will be use for display view all visited history link.
                 // no need to work here to reduce AJAX call.
                 return ;
             }
@@ -407,23 +429,27 @@ class LibMaps {
             const popupLatLng = event.popup?.getLatLng();
             if (popupLatLng && popupLatLng.lat && popupLatLng.lng) {
                 // if there is popup latitude & langitude.
-                additionalContentPlaceholder.innerHTML = '';
-
-                Ajax.fetchGet('HTTP/summary-visit-details.php?lat=' + encodeURIComponent(popupLatLng.lat) + '&lng=' + encodeURIComponent(popupLatLng.lng))
+                Ajax.fetchGet('HTTP/summary-visited.php?lat=' + encodeURIComponent(popupLatLng.lat) + '&lng=' + encodeURIComponent(popupLatLng.lng))
                 .then((response) => {
-                    if (response.visitedPlace?.history?.items) {
-                        let visitedPlaceHTML = '<h6 class="m-0">Years visited</h6>';
-                        response.visitedPlace?.history?.items?.forEach((item) => {
-                            if (item?.visitYear) {
-                                visitedPlaceHTML += '<a class="marker-popup-year-visited" title="Latest date on this year: ' + item.startTime + '" data-last-visit-date="' + item.startTime + '">' + item.visitYear + '</a><br>';
-                            }
-                        });
-                        additionalContentPlaceholder?.insertAdjacentHTML('beforeend', visitedPlaceHTML);
+                    if (response?.visitedPlace?.minMaxYears) {
+                        let visitedHistoryLinkHTML = '<a class="pmtl-view-all-visited-history btn btn-sm btn-outline-secondary" \n\
+                            data-pmtl-visit-id="' + response.visitedPlace.minMaxYears.visit_id + '" \n\
+                            data-pmtl-place-id="' + response.visitedPlace.minMaxYears.topCandidate_placeId + '" \n\
+                            data-pmtl-place-location-latlng="' + response.visitedPlace.minMaxYears.topCandidate_placeLocation_latLng	 + '" \n\
+                            data-bs-toggle="modal" data-bs-target="#pmtl-bs-modal">';
+                        visitedHistoryLinkHTML += 'View all visited history';
+                        if (response.visitedPlace.minMaxYears.startYear === response.visitedPlace.minMaxYears.endYear) {
+                            visitedHistoryLinkHTML += ' (' + response.visitedPlace.minMaxYears.startYear + ')';
+                        } else {
+                            visitedHistoryLinkHTML += ' (' + response.visitedPlace.minMaxYears.startYear + ' - ' + response.visitedPlace.minMaxYears.endYear + ')';
+                        }
+                        visitedHistoryLinkHTML += '</a>';
+                        additionalContentPlaceholder.insertAdjacentHTML('beforeend', visitedHistoryLinkHTML);
                     }
                 });
             }
         });
-    }// #listenMapPopupOpenDisplayYearsVisited
+    }// #listenMapPopupOpenDisplayViewAllVisitedHistoryLink
 
 
     /**
@@ -498,15 +524,53 @@ class LibMaps {
                     // do not prepend activity to timeline paths because it may cause of confusion 
                     // and can be duplicate paths on the same time.
                     // activity is covered by the timeline time between start to end.
-                    /*const activityPathStyle = {
-                        color: 'orange',
-                        weight: 3,
-                    };
-                    const activityStartLatLng = MapsUtil.convertLatLngString(item.activity.start_latLng);
-                    const activityEndLatLng = MapsUtil.convertLatLngString(item.activity.end_latLng);
-                    const polyline = L.polyline([activityStartLatLng, activityEndLatLng], activityPathStyle);
-                    polyline.bindPopup('actvt id: ' + item.activity.activity_id);
-                    this.#timelineLayerGroup.addLayer(polyline);*/
+                    if (typeof(pmtl_debug_activity) === 'boolean' && pmtl_debug_activity === true) {
+                        const activityPathStyle = {
+                            color: 'orange',
+                            weight: 6,
+                        };
+                        const activityHighlightPathStyle = {
+                            color: '#fc7703',
+                            weight: 8,
+                        };
+                        const activityStartLatLng = MapsUtil.convertLatLngString(item.activity.start_latLng);
+                        const activityEndLatLng = MapsUtil.convertLatLngString(item.activity.end_latLng);
+                        console.debug('Drawing activity ' + item.activity.activity_id + '; lat-lng: ' + activityStartLatLng + '-' + activityEndLatLng);
+                        const polyline = L.polyline([activityStartLatLng, activityEndLatLng], activityPathStyle);
+                        polyline.bindPopup('activity_id: ' + item.activity.activity_id 
+                            + '; topCandidate_type: ' + item.activity.topCandidate_type
+                            + '; lat-lng: ' + item.activity.start_latLng + '-' + item.activity.end_latLng + ' (' + item.activity.distanceMeters + 'M)'
+                        );
+                        polyline.on('popupopen', () => {
+                            polyline.setStyle(activityHighlightPathStyle);
+                        });
+                        polyline.on('popupclose', () => {
+                            polyline.setStyle(activityPathStyle);
+                        });
+                        const pathSetMarkerStyle = {
+                            color: 'orange',
+                            fillColor: 'orange',
+                            fillOpacity: 1,
+                            radius: 8,
+                        };
+                        const pathSetMarkerStyleActive = {
+                            color: '#fc7703',
+                            fillColor: '#fc7703',
+                            fillOpacity: 1,
+                            radius: 10,
+                        };
+                        const pathSetMarkerStart = L.circleMarker(activityStartLatLng, pathSetMarkerStyle)
+                        .bindPopup(
+                            'activity_id: ' + item.activity.activity_id
+                        );
+                        pathSetMarkerStart.on('popupopen', () => {
+                            pathSetMarkerStart.setStyle(pathSetMarkerStyleActive);
+                        });
+                        pathSetMarkerStart.on('popupclose', () => {
+                            pathSetMarkerStart.setStyle(pathSetMarkerStyle)
+                        });
+                        this.#timelineLayerGroup.addLayer(polyline).addLayer(pathSetMarkerStart);
+                    }// endif;
                     // the code above is for debugging only. to show that activity is already have paths in the `timelinepath` and `timelinepath` have a lot more details on points.
                 }
 
@@ -576,10 +640,7 @@ class LibMaps {
                     + (item.startTime ? '<br>Latest on ' + item.startTime : '')
                     + '</p>'
                     + '<div class="additional-content-placeholder"></div>'
-                    + '<div class="view-on-google-maps-links">'
-                    + '<small><a href="' + googleMapsURL + '" target="googlemaps">View on Google Maps</a></small>'
-                    + ' <small><a href="' + googleMapsURLNoPlaceId + '" target="googlemaps" title="View by latitude, longitude only"><i class="fa-solid fa-map-pin"></i></a></small>'
-                    + '</div>',
+                    + this.#getViewOnGoogleMapsLinks(item?.topCandidate_placeLocation_latLng, item?.topCandidate_placeId),
                     {
                         className: 'map-marker-popup',
                     }
@@ -719,10 +780,7 @@ class LibMaps {
                     + (item.startTime ? '<br>Latest on ' + item.startTime : '')
                     + '</p>'
                     + '<div class="additional-content-placeholder"></div>'
-                    + '<div class="view-on-google-maps-links">'
-                    + '<small><a href="' + googleMapsURL + '" target="googlemaps">View on Google Maps</a></small>'
-                    + ' <small><a href="' + googleMapsURLNoPlaceId + '" target="googlemaps" title="View by latitude, longitude only"><i class="fa-solid fa-map-pin"></i></a></small>'
-                    + '</div>',
+                    + this.#getViewOnGoogleMapsLinks(item?.topCandidate_placeLocation_latLng, item?.topCandidate_placeId),
                     {
                         className: 'map-marker-popup',
                     }
@@ -733,7 +791,7 @@ class LibMaps {
         // end display summary visited places. --------------------------
 
         this.#listenMapOverlayPathsTraveledSelected();
-        this.#listenMapPopupOpenDisplayYearsVisited();
+        this.#listenMapPopupOpenDisplayViewAllVisitedHistoryLink();
     }// setupDefaultMap
 
 
@@ -745,7 +803,7 @@ class LibMaps {
      */
     updateMap() {
         this.#map.invalidateSize(true);
-    }
+    }// updateMap
 
 
 }// LibMaps

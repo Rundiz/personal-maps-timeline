@@ -392,6 +392,8 @@ class TimelinePanel {
                 const timelineDateInput = document.getElementById(this.#timelineDateInputId);
                 if (timelineDateInput.value !== IndexJSObject.loadSelectedDate) {
                     // if not yet loaded.
+                    // reset visited history > selected date (if exists).
+                    this.#Index.VisitedHistory.resetClickedVisitedDate();
                     // make ajax call to get timeline data.
                     this.#ajaxGetTimelineData(timelineDateInput.value);
                 }
@@ -465,6 +467,8 @@ class TimelinePanel {
         this.#ListingPanel.closePanel();
         // clear loaded map layer group.
         this.#LibMaps.clearMapTimelineLayerGroup();
+        // reset selected date on visited history dialog.
+        this.#Index.VisitedHistory.resetClickedVisitedDate();
     }// closeTimelinePanel
 
 

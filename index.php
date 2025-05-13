@@ -95,6 +95,37 @@ $navbarExpand = 'md';
             </div>
         </template><!-- #pmtl-timeline-panel-template -->
 
+        <template id="pmtl-dialog-visited-history-template">
+            <form id="pmtl-visited-history-form" class="row gy-3 mb-3">
+                <input id="pmtl-visited-place-id" type="hidden" name="placeId">
+                <div class="col-sm-5">
+                    <div class="form-floating">
+                        <select id="pmtl-visited-history-year" class="form-select" name="year" aria-label="Select year visited"></select>
+                        <label for="pmtl-visited-history-year">Year</label>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="form-floating">
+                        <select id="pmtl-visited-history-month" class="form-select" name="month" aria-label="Select month visited">
+                            <option value="">All</option>
+                            <?php
+                            for ($i = 1; $i <= 12; ++$i) {
+                                echo '<option value="' . $i . '">' . sprintf('%02d', $i) . '</option>';
+                            }// endfor;
+                            unset($i);
+                            ?> 
+                        </select>
+                        <label for="pmtl-visited-history-month">Month</label>
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-primary" type="submit">Filter</button>
+                </div>
+            </form>
+            <h5>Visited history</h5>
+            <div id="pmtl-visited-history-dates-placeholder"></div>
+        </template><!-- #pmtl-dialog-visited-history-template -->
+
         <script>
             const appBasePath = '<?php echo $Url->getAppBasePath(); ?>';
             let IndexJSObject = {
@@ -138,6 +169,7 @@ $customHTMLFoot = '<script src="' . $Assets->assetUrl('/assets/vendor/leaflet/le
 <script src="' . $Assets->assetUrl('assets/js/index/dialog-element.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index/listing-panel.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index/timeline-panel.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/index/visited-history.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index.js') . '"></script>';
 include 'HTTP/common/html-foot.php';
 unset($customHTMLFoot, $customHTMLHead);

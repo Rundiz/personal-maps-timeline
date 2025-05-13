@@ -43,6 +43,12 @@ class Index {
 
 
     /**
+     * @type {VisitedHistory}
+     */
+    #VisitedHistory;
+
+
+    /**
      * JS for index page.
      */
     constructor() {
@@ -163,16 +169,20 @@ class Index {
         this.#DialogElement = new DialogElement(this);
         this.#DialogElement.init();
 
+        this.#VisitedHistory = new VisitedHistory(this);
+
+        // work on place name dialog.
         this.#listenClickEditPlaceName();
         this.#listenFormSubmitEditPlaceName();
 
+        // work on navbar menu.
         this.#listenClickOutsideCloseNavMenu();
         this.#listenClickNavSummaryDateDropdown();
     }// #init
 
 
     /**
-     * Listen on click edit place name and do its tasks.
+     * Listen on click edit place name from map popup and do its tasks.
      * 
      * This method was called from `#init()`.
      */
@@ -190,7 +200,7 @@ class Index {
             this.#DialogElement.setDialogContents('Edit place name', null);
 
             // AJAX get edit place name form and its data.
-            this.#ajaxGetEditPlaceNameForm(thisTarget.dataset.placeId)
+            this.#ajaxGetEditPlaceNameForm(thisTarget.dataset.pmtlPlaceId)
             .then((response) => {
                 this.#DialogElement.setDialogContents(null, response?.result?.htmlForm);
             });
@@ -378,6 +388,16 @@ class Index {
 
 
     /**
+     * Get DialogElement class.
+     * 
+     * @type {DialogElement} Dialog element class instance.
+     */
+    get DialogElement() {
+        return this.#DialogElement;
+    }// DialogElement
+
+
+    /**
      * Get ListingPanel class.
      * 
      * @type {ListingPanel} Listing panel class instance.
@@ -395,6 +415,16 @@ class Index {
     get TimelinePanel() {
         return this.#TimelinePanel;
     }// TimelinePanel
+
+
+    /**
+     * Get VisitedHistory class.
+     * 
+     * @type {VisitedHistory} Visited history class instance.
+     */
+    get VisitedHistory() {
+        return this.#VisitedHistory;
+    }// VisitedHistory
 
 
 }// Index

@@ -72,6 +72,7 @@ class DialogElement {
     closeDialog(removeContents = false) {
         const bsModal = document.getElementById(this.#bootstrapDialogId);
         if (true === removeContents) {
+            console.debug('rem cont');
             // event listener must listen on HTML element not Bootstrap object.
             bsModal.addEventListener('hidden.bs.modal', (event) => {
                 this.removeDialogContents();

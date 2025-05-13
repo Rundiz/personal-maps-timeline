@@ -31,12 +31,16 @@ body {
 }
 
 
+.marker-popup-year-visited {
+    cursor: pointer;
+}
+
+
 .map-marker-popup .additional-content-placeholder {
     margin-bottom: 10px;
 }
 .map-marker-popup .marker-popup-year-visited {
     color: var(--bs-body-color);
-    cursor: pointer;
     text-decoration: none;
 }
 
@@ -55,6 +59,11 @@ body {
         padding-left: 0;
         padding-right: 0;
     }
+}
+
+
+.pagination a {
+    cursor: pointer;
 }
 
 
@@ -237,6 +246,15 @@ body {
     cursor: pointer;
     display: block;
     text-decoration: none;
+}
+
+
+.pmtl-visited-history-list-item-active {
+    background-color: rgba(140, 140, 140, 0.2);
+    padding-bottom: 5px;
+    padding-left: 0;
+    padding-right: 8px;
+    padding-top: 5px;
 }
 
 
