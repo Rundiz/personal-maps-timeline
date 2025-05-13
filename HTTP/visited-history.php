@@ -57,6 +57,8 @@ if ('' === $month) {
 }
 if (!is_numeric($offset) || $offset < 0) {
     $offset = 0;
+} elseif (is_numeric($offset)) {
+    $offset = intval($offset);
 }
 
 

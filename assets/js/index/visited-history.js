@@ -87,7 +87,7 @@ class VisitedHistory {
 
 
     /**
-     * @type {Array} Available pages offset that calculated from server.
+     * @type {Array|Integer[]} Available pages offset that calculated from server.
      */
     #pagesOffset = [0];
 
@@ -160,25 +160,25 @@ class VisitedHistory {
         return Ajax.fetchGet(url)
         .then((response) => {
             // set current data.
-            if (response?.visitedHistory?.datesVisited?.currentOffset) {
+            if (typeof(response?.visitedHistory?.datesVisited?.currentOffset) === 'number') {
                 this.#currentOffset = parseInt(response.visitedHistory.datesVisited.currentOffset);
             } else {
                 console.warn('There is no `currentOffset` returned from server.');
             }
-            if (response?.visitedHistory?.datesVisited?.itemsPerPage) {
+            if (typeof(response?.visitedHistory?.datesVisited?.itemsPerPage) === 'number') {
                 this.#itemsPerPage = parseInt(response.visitedHistory.datesVisited.itemsPerPage);
             } else {
-                consol.warn('There is no `itemsPerPage` returned from server.');
+                console.warn('There is no `itemsPerPage` returned from server.');
             }
-            if (response?.visitedHistory?.datesVisited?.total) {
+            if (typeof(response?.visitedHistory?.datesVisited?.total) === 'number') {
                 this.#totalItems = parseInt(response.visitedHistory.datesVisited.total);
             } else {
-                consol.warn('There is no `total` returned from server.');
+                console.warn('There is no `total` returned from server.');
             }
-            if (response?.visitedHistory?.datesVisited?.pagesOffset) {
+            if (typeof(response?.visitedHistory?.datesVisited?.pagesOffset) !== 'undefined') {
                 this.#pagesOffset = response.visitedHistory.datesVisited.pagesOffset;
             } else {
-                consol.warn('There is no `pagesOffset` returned from server.');
+                console.warn('There is no `pagesOffset` returned from server.');
             }
 
             return Promise.resolve(response);
