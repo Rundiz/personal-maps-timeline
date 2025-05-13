@@ -267,7 +267,10 @@ class LibMaps {
             )
             + '</p>'
             + '<div class="additional-content-placeholder"></div>'
-            + this.#getViewOnGoogleMapsLinks(item?.visit?.topCandidate_placeLocation_latLng, item?.visit?.topCandidate_placeId)
+            + this.#getViewOnGoogleMapsLinks(item?.visit?.topCandidate_placeLocation_latLng, item?.visit?.topCandidate_placeId),
+            {
+                className: 'map-marker-popup',
+            }
         );
         marker.on('popupopen', () => {
             marker.setIcon(markerIconHighlighted);
