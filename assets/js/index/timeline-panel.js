@@ -190,7 +190,9 @@ class TimelinePanel {
                     [startTime, endTime] = getStartEndDateTime(item);
 
                     listResult += '<li id="segment-id-' + item.id + '-' + String(index) + '" class="is-visit">'
-                        + '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + ' place-title-placement place-id-' + item?.visit?.topCandidate_placeId + '" data-segment-id="' + item.id + '-' + String(index) + '">' 
+                        + '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + ' place-title-placement place-id-' + item?.visit?.topCandidate_placeId + '"'
+                            + ' data-pmtl-segment-id="' + item.id + '-' + String(index) + '"'
+                            + ' data-pmtl-place-id="' + item?.visit?.topCandidate_placeId + '">' 
                             + (item?.visit?.place_name ?? item.visit.topCandidate_placeLocation_latLng) 
                         + '</a></h6>'
                         + (
@@ -207,7 +209,9 @@ class TimelinePanel {
                         let subVisitResult = '<ul class="sub-visit-list">';
                         item.visit.subVisits.forEach((eachSubV) => {
                             subVisitResult += '<li id="segment-id-' + item.id + '-' + String(index) + '-' + eachSubV.visit_id + '" class="is-visit">'
-                            subVisitResult += '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + ' place-title-placement place-id-' + eachSubV?.topCandidate_placeId + '" data-segment-id="' + item.id + '-' + String(index) + '">' 
+                            subVisitResult += '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + ' place-title-placement place-id-' + eachSubV?.topCandidate_placeId + '"'
+                                + ' data-pmtl-segment-id="' + item.id + '-' + String(index) + '"'
+                                + ' data-pmtl-place-id="' + eachSubV.topCandidate_placeId + '">' 
                                 + (eachSubV?.place_name ?? eachSubV.topCandidate_placeLocation_latLng) 
                             + '</a></h6>'
                             const latLngArray = MapsUtil.convertLatLngString(eachSubV.topCandidate_placeLocation_latLng);
@@ -246,7 +250,9 @@ class TimelinePanel {
                         hasResult = true;
 
                         listResult += '<li id="segment-id-' + item.id + '-' + String(index) + '" class="is-travel">'
-                            + '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + '" data-segment-id="' + item.id + '-' + String(index) + '">Travel</a></h6>'
+                            + '<h6 class="m-0"><a class="' + this.#timelineItemLinkClass + '"'
+                                + ' data-pmtl-segment-id="' + item.id + '-' + String(index) + '"'
+                                + '>Travel</a></h6>'
                             + (
                                 (startTime !== '' || endTime !== '' ? '<div class="text-secondary">' : '')
                                 + (startTime === '' && endTime !== '' ? '<i class="fa-solid fa-arrow-right" title="Continue from previous day"></i> ' : '')
@@ -357,7 +363,7 @@ class TimelinePanel {
             if (thisTarget?.closest('.' + this.#timelineItemLinkClass)) {
                 thisTarget = thisTarget?.closest('.' + this.#timelineItemLinkClass);
                 event.preventDefault();
-                const segment_id = thisTarget.dataset.segmentId;
+                const segment_id = thisTarget.dataset.pmtlSegmentId;
                 this.#LibMaps.openMapPopup(segment_id);
             }
         });
@@ -370,22 +376,6 @@ class TimelinePanel {
      * This method was called from `init()`.
      */
     #listenEventsOnDateInput() {
-        /**
-         * Delay input.
-         * 
-         * @link https://stackoverflow.com/a/1909508/128761 Original source code.
-         * @param {Callback} fn 
-         * @param {Number} ms 
-         * @returns 
-         */
-        function delay(fn, ms) {
-            let timer = 0;
-            return function (...args) {
-                clearTimeout(timer);
-                timer = setTimeout(fn.bind(this, ...args), ms || 0);
-            }
-        }// delay
-
         document.addEventListener('keydown', (event) => {
             if (event.key === 'Enter' && event?.target?.getAttribute('id') === this.#timelineDateInputId) {
                 event.preventDefault();
@@ -400,7 +390,7 @@ class TimelinePanel {
             }
         }, false);
 
-        document.addEventListener('keyup', delay(
+        document.addEventListener('keyup', Utils.delay(
             (event) => {
                 if (event?.target?.getAttribute('id') === this.#timelineDateInputId) {
                     if (event.key === 'Enter' || event.key === 'Escape') {
@@ -412,7 +402,7 @@ class TimelinePanel {
             500
         ));
 
-        document.addEventListener('change', delay(
+        document.addEventListener('change', Utils.delay(
             (event) => {
                 if (event?.target?.getAttribute('id') === this.#timelineDateInputId) {
                     this.#dispatchEventOnDateInputToLoadData();

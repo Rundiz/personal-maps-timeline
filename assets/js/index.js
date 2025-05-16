@@ -37,6 +37,12 @@ class Index {
 
 
     /**
+     * @type {SearchPanel}
+     */
+    #SearchPanel;
+
+
+    /**
      * @type {TimelinePanel}
      */
     #TimelinePanel;
@@ -87,7 +93,7 @@ class Index {
 
             if (typeof(response?.recordDates) === 'object') {
                 let summaryDateHTML = '<li class="nav-item dropdown">'
-                + '<a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">'
+                + '<a class="nav-link dropdown-toggle" href="#" role="button" title="Since year summary" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Since year summary">'
                 + 'Since: '
                 + response.recordDates.sinceYear + ' - ' + response.recordDates.latestDate
                 + '</a>'
@@ -165,6 +171,9 @@ class Index {
 
         this.#TimelinePanel = new TimelinePanel(this.#LibMaps, this);
         this.#TimelinePanel.init();
+
+        this.#SearchPanel = new SearchPanel(this.#LibMaps, this);
+        this.#SearchPanel.init();
 
         this.#DialogElement = new DialogElement(this);
         this.#DialogElement.init();
@@ -395,6 +404,16 @@ class Index {
     get DialogElement() {
         return this.#DialogElement;
     }// DialogElement
+
+
+    /**
+     * Get LibMaps class.
+     * 
+     * @type {LibMaps} Library maps class instance.
+     */
+    get LibMaps() {
+        return this.#LibMaps;
+    }// LibMaps
 
 
     /**

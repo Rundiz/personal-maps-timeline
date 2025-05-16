@@ -6,6 +6,7 @@ CSS for index page.
 :root {
     --border-radius: var(--bs-border-radius);
     --bs-navbar-height: 56px;
+    --pmtl-active-listitem-background: rgba(140, 140, 140, 0.2);
 }
 #pmtl-map {
     --background-color: rgba(100, 100, 100, .09);
@@ -31,7 +32,12 @@ body {
 }
 
 
-.marker-popup-year-visited {
+.marker-popup-year-visited,
+.pmtl-edit-placename, 
+.pmtl-nav-summary-date-eachyear,
+.pmtl-search-result-place-link,
+#pmtl-open-search-panel,
+#pmtl-open-timeline-panel {
     cursor: pointer;
 }
 
@@ -80,18 +86,8 @@ body {
 }
 
 
-.pmtl-edit-placename {
-    cursor: pointer;
-}
-
-
 .pmtl-marker-highlighted {
     color: #ff5555;
-}
-
-
-.pmtl-nav-summary-date-eachyear {
-    cursor: pointer;
 }
 
 
@@ -196,6 +192,14 @@ body {
     }
 }
 
+.pmtl-search-result-list > li {
+    margin-bottom: 5px;
+}
+.pmtl-search-result-list > li.active {
+    background-color: var(--pmtl-active-listitem-background);
+}
+
+
 #pmtl-timeline-panel-content-placeholder ul {
     list-style-type: none;
     padding-left: 10px;
@@ -250,7 +254,7 @@ body {
 
 
 .pmtl-visited-history-list-item-active {
-    background-color: rgba(140, 140, 140, 0.2);
+    background-color: var(--pmtl-active-listitem-background);
     padding-bottom: 5px;
     padding-left: 0;
     padding-right: 8px;
@@ -267,9 +271,4 @@ body {
     align-items: center;
     display: flex;
     justify-content: center;
-}
-
-
-#pmtl-open-timeline-panel {
-    cursor: pointer;
 }

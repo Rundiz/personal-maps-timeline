@@ -6,6 +6,24 @@
 class Utils {
 
 
+    
+    /**
+     * Delay before running callback function.
+     * 
+     * @link https://stackoverflow.com/a/1909508/128761 Original source code.
+     * @param {Callback} fn The callback function.
+     * @param {Number} ms Number to delay in milliseconds. (See `setTimeout`.)
+     * @returns {Function}
+    */
+    static delay(fn, ms) {
+        let timer = 0;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(fn.bind(this, ...args), ms || 0);
+        }
+    }// delay
+
+
     /**
      * Format date to YYYY-MM-DD.
      * 

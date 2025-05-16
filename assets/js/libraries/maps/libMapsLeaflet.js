@@ -35,6 +35,12 @@ class LibMaps {
 
 
     /**
+     * @type {Object} Summary visited places (that was first load at the beginning of page loaded) as markers.
+     */
+    #summaryVisitedPlacesItems = {};
+
+
+    /**
      * @type {Object} Timeline items such as marker, polyline path.
      */
     #timelineItems = {};
@@ -93,6 +99,75 @@ class LibMaps {
 
         this.#pathsTraveledLayerGroup?.clearLayers();
     }// #closePathsTraveledLayerGroup
+
+
+    /**
+     * Draw activity for debugging only.
+     * 
+     * Do not prepend activity to timeline paths because it may cause of confusion 
+     * and can be duplicate paths on the same time.  
+     * Activity is covered by the timeline time between start to end.
+     * 
+     * This code shows that activity is already have paths in the `timelinepath` and `timelinepath` have a lot more details on points.  
+     * To make this method work, set `pmtl_debug_activity = true;` in your browser console and open timeline by date.
+     * 
+     * This method was called from `drawTimelineData()`.
+     * 
+     * @param {Object} item A single DB result row data that should contains properties such as `activity`.
+     * @returns {undefined}
+     */
+    #drawActivityDebug(item) {
+        if (typeof(pmtl_debug_activity) === 'boolean' && pmtl_debug_activity === true) {
+            const activityPathStyle = {
+                color: 'orange',
+                weight: 6,
+            };
+            const activityHighlightPathStyle = {
+                color: '#fc7703',
+                weight: 8,
+            };
+            const activityStartLatLng = MapsUtil.convertLatLngString(item.activity.start_latLng);
+            const activityEndLatLng = MapsUtil.convertLatLngString(item.activity.end_latLng);
+            console.debug('Drawing activity ' + item.activity.activity_id + '; lat-lng: ' + activityStartLatLng + '-' + activityEndLatLng);
+
+            const polyline = L.polyline([activityStartLatLng, activityEndLatLng], activityPathStyle);
+            polyline.bindPopup('activity_id: ' + item.activity.activity_id 
+                + '; topCandidate_type: ' + item.activity.topCandidate_type
+                + '; lat-lng: ' + item.activity.start_latLng + '-' + item.activity.end_latLng + ' (' + item.activity.distanceMeters + 'M)'
+            );
+            polyline.on('popupopen', () => {
+                polyline.setStyle(activityHighlightPathStyle);
+            });
+            polyline.on('popupclose', () => {
+                polyline.setStyle(activityPathStyle);
+            });
+
+            const pathSetMarkerStyle = {
+                color: 'orange',
+                fillColor: 'orange',
+                fillOpacity: 1,
+                radius: 8,
+            };
+            const pathSetMarkerStyleActive = {
+                color: '#fc7703',
+                fillColor: '#fc7703',
+                fillOpacity: 1,
+                radius: 10,
+            };
+            const pathSetMarkerStart = L.circleMarker(activityStartLatLng, pathSetMarkerStyle)
+            .bindPopup(
+                'activity_id: ' + item.activity.activity_id
+            );
+            pathSetMarkerStart.on('popupopen', () => {
+                pathSetMarkerStart.setStyle(pathSetMarkerStyleActive);
+            });
+            pathSetMarkerStart.on('popupclose', () => {
+                pathSetMarkerStart.setStyle(pathSetMarkerStyle)
+            });
+
+            this.#timelineLayerGroup.addLayer(polyline).addLayer(pathSetMarkerStart);
+        }// endif;
+    }// #drawActivityDebug
 
 
     /**
@@ -158,6 +233,47 @@ class LibMaps {
             }// endfor; loop each semantic segment row.
         }// endif; there is response items from AJAX.
     }// #drawPathsTraveled
+
+
+    /**
+     * Draw summary visited places (all places from the beginning of page load).
+     * 
+     * This method was called from `setupDefaultMap()`.
+     * 
+     * @param {Object} summaryVisitedPlaces The AJAX result that must contain `.items` property inside. This property contains the visted places result as array.
+     * @returns {undefined}
+     */
+    #drawSummaryVisitedPlaces(summaryVisitedPlaces) {
+        if (summaryVisitedPlaces?.items) {
+            summaryVisitedPlaces.items.forEach((item) => {
+                const latLngArray = MapsUtil.convertLatLngString(item.topCandidate_placeLocation_latLng);
+                const googleMapsURL = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','), item?.topCandidate_placeId);
+                const googleMapsURLNoPlaceId = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','));
+                const circleMarker = L.circleMarker(latLngArray, {
+                    color: '#f5f9ff',
+                    fillColor: '#999999',
+                    fillOpacity: 0.7,
+                    radius: 4,
+                    stroke: true,
+                    weight: 2,
+                })
+                .bindPopup(
+                    '<p data-pmtl-segment-id="' + item.id + '" data-pmtl-visit_id="' + item.visit_id + '" data-pmtl-place-id="' + item.topCandidate_placeId + '" data-pmtl-latlng="' + item.topCandidate_placeLocation_latLng + '">'
+                    + '<strong class="place-title-placement place-id-' + item?.topCandidate_placeId + '">' + (item?.place_name ?? item.topCandidate_placeLocation_latLng) + '</strong>'
+                    + this.#getEditPlaceNameHTML(item?.topCandidate_placeId)
+                    + (item.startTime ? '<br>Latest on ' + item.startTime : '')
+                    + '</p>'
+                    + '<div class="additional-content-placeholder"></div>'
+                    + this.#getViewOnGoogleMapsLinks(item?.topCandidate_placeLocation_latLng, item?.topCandidate_placeId),
+                    {
+                        className: 'map-marker-popup',
+                    }
+                )
+                .addTo(this.#map);
+                this.#summaryVisitedPlacesItems['summaryVisitedPlace-' + item.topCandidate_placeLocation_latLng] = circleMarker;
+            });
+        }
+    }// #drawSummaryVisitedPlaces
 
 
     /**
@@ -256,7 +372,7 @@ class LibMaps {
         const googleMapsURLNoPlaceId = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','));
         const marker = L.marker(latLngArray, defaultMarkerStyle)
         .bindPopup(
-            '<p data-segment-id="' + item.id + '-' + String(index) + '">'
+            '<p data-pmtl-segment-id="' + item.id + '-' + String(index) + '" data-pmtl-place-id="' + item?.visit?.topCandidate_placeId + '">'
             + '<strong class="place-title-placement place-id-' + item?.visit?.topCandidate_placeId + '">' + (item?.visit?.place_name ?? item.visit.topCandidate_placeLocation_latLng) + '</strong>'
             + this.#getEditPlaceNameHTML(item?.visit?.topCandidate_placeId)
             + (startTime !== '' ? 
@@ -524,57 +640,8 @@ class LibMaps {
             dbResult.result.items.forEach((item, index) => {
                 if (item.activity) {
                     // if there is activity.
-                    // do not prepend activity to timeline paths because it may cause of confusion 
-                    // and can be duplicate paths on the same time.
-                    // activity is covered by the timeline time between start to end.
-                    if (typeof(pmtl_debug_activity) === 'boolean' && pmtl_debug_activity === true) {
-                        const activityPathStyle = {
-                            color: 'orange',
-                            weight: 6,
-                        };
-                        const activityHighlightPathStyle = {
-                            color: '#fc7703',
-                            weight: 8,
-                        };
-                        const activityStartLatLng = MapsUtil.convertLatLngString(item.activity.start_latLng);
-                        const activityEndLatLng = MapsUtil.convertLatLngString(item.activity.end_latLng);
-                        console.debug('Drawing activity ' + item.activity.activity_id + '; lat-lng: ' + activityStartLatLng + '-' + activityEndLatLng);
-                        const polyline = L.polyline([activityStartLatLng, activityEndLatLng], activityPathStyle);
-                        polyline.bindPopup('activity_id: ' + item.activity.activity_id 
-                            + '; topCandidate_type: ' + item.activity.topCandidate_type
-                            + '; lat-lng: ' + item.activity.start_latLng + '-' + item.activity.end_latLng + ' (' + item.activity.distanceMeters + 'M)'
-                        );
-                        polyline.on('popupopen', () => {
-                            polyline.setStyle(activityHighlightPathStyle);
-                        });
-                        polyline.on('popupclose', () => {
-                            polyline.setStyle(activityPathStyle);
-                        });
-                        const pathSetMarkerStyle = {
-                            color: 'orange',
-                            fillColor: 'orange',
-                            fillOpacity: 1,
-                            radius: 8,
-                        };
-                        const pathSetMarkerStyleActive = {
-                            color: '#fc7703',
-                            fillColor: '#fc7703',
-                            fillOpacity: 1,
-                            radius: 10,
-                        };
-                        const pathSetMarkerStart = L.circleMarker(activityStartLatLng, pathSetMarkerStyle)
-                        .bindPopup(
-                            'activity_id: ' + item.activity.activity_id
-                        );
-                        pathSetMarkerStart.on('popupopen', () => {
-                            pathSetMarkerStart.setStyle(pathSetMarkerStyleActive);
-                        });
-                        pathSetMarkerStart.on('popupclose', () => {
-                            pathSetMarkerStart.setStyle(pathSetMarkerStyle)
-                        });
-                        this.#timelineLayerGroup.addLayer(polyline).addLayer(pathSetMarkerStart);
-                    }// endif;
-                    // the code above is for debugging only. to show that activity is already have paths in the `timelinepath` and `timelinepath` have a lot more details on points.
+                    // read more at method `#drawActivityDebug()`.
+                    this.#drawActivityDebug(item);
                 }
 
                 // build timeline paths.
@@ -637,7 +704,7 @@ class LibMaps {
                     weight: 2,
                 })
                 .bindPopup(
-                    '<p>'
+                    '<p data-pmtl-segment-id="' + item.id + '" data-pmtl-visit_id="' + item.visit_id + '" data-pmtl-place-id="' + item.topCandidate_placeId + '">'
                     + '<strong class="place-title-placement place-id-' + item?.topCandidate_placeId + '">' + (item?.place_name ?? item.topCandidate_placeLocation_latLng) + '</strong>'
                     + this.#getEditPlaceNameHTML(item?.topCandidate_placeId)
                     + (item.startTime ? '<br>Latest on ' + item.startTime : '')
@@ -678,29 +745,45 @@ class LibMaps {
     /**
      * Open map popups.
      * 
-     * This method was called from `TimelinePanel.#listenClickTimelineItem()`.
+     * This method was called from `TimelinePanel.#listenClickTimelineItem()`, `SearchPanel.#listenClickSearchResultItem()`.
      * 
      * @param {string} segment_id The `segment_id` from DB.
+     * @param {Object} options The options.
+     * @param {string} options.summaryVisitedPlaces The latitude, longitude of summary visited places.
      */
-    openMapPopup(segment_id) {
+    openMapPopup(segment_id, options = {}) {
         if (typeof(segment_id) !== 'string') {
             throw new Error('The argument `segment_id` must be string.');
         }
+        if (typeof(options) !== 'object') {
+            throw new Error('The argument `options` must be an object.');
+        }
 
-        if (this.#timelineItems[segment_id]) {
+        let itemBounds, thisMarker = null;
+
+        if ('' !== segment_id && this.#timelineItems[segment_id]) {
+            // if there is argument `segment_id` which will be use for normal timeline items.
             this.#timelineItems[segment_id].fire('click');
-            this.#map.invalidateSize(true);
-            const itemBounds = this.#timelineItems[segment_id].getBounds?.();
+            itemBounds = this.#timelineItems[segment_id].getBounds?.();
+            thisMarker = this.#timelineItems[segment_id].getLatLng?.();
+        } else if (
+            typeof(options?.summaryVisitedPlaces) === 'string' && 
+            '' !== options?.summaryVisitedPlaces &&
+            this.#summaryVisitedPlacesItems[options.summaryVisitedPlaces]
+        ) {
+            // if there is an option to use with summary visited places.
+            this.#summaryVisitedPlacesItems[options.summaryVisitedPlaces].fire('click');
+            itemBounds = this.#summaryVisitedPlacesItems[options.summaryVisitedPlaces].getBounds?.();
+            thisMarker = this.#summaryVisitedPlacesItems[options.summaryVisitedPlaces].getLatLng?.();
+        }// endif;
 
-            if (itemBounds) {
-                this.#map.flyToBounds(itemBounds);
-            } else {
-                // if it is possible this is marker (has no `getBounds()`).
-                const thisMarker = this.#timelineItems[segment_id].getLatLng?.();
-                if (thisMarker) {
-                    this.#map.flyTo([thisMarker.lat, thisMarker.lng]);
-                }
-            }
+        // trying to bound to marker.
+        this.#map.invalidateSize(true);
+        if (itemBounds) {
+            this.#map.flyToBounds(itemBounds);
+        } else if (typeof(thisMarker) === 'object') {
+            // if it is possible this is marker (has no `getBounds()`).
+            this.#map.flyTo([thisMarker.lat, thisMarker.lng]);
         }
     }// openMapPopup
 
@@ -763,34 +846,7 @@ class LibMaps {
         }).addTo(this.#map);
 
         // display summary visited places. ------------------------------
-        if (summaryVisitedPlaces?.items) {
-            summaryVisitedPlaces.items.forEach((item) => {
-                const latLngArray = MapsUtil.convertLatLngString(item.topCandidate_placeLocation_latLng);
-                const googleMapsURL = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','), item?.topCandidate_placeId);
-                const googleMapsURLNoPlaceId = MapsUtil.buildGoogleMapsSearchURL(latLngArray.join(','));
-                const circleMarker = L.circleMarker(latLngArray, {
-                    color: '#f5f9ff',
-                    fillColor: '#999999',
-                    fillOpacity: 0.7,
-                    radius: 4,
-                    stroke: true,
-                    weight: 2,
-                })
-                .bindPopup(
-                    '<p>'
-                    + '<strong class="place-title-placement place-id-' + item?.topCandidate_placeId + '">' + (item?.place_name ?? item.topCandidate_placeLocation_latLng) + '</strong>'
-                    + this.#getEditPlaceNameHTML(item?.topCandidate_placeId)
-                    + (item.startTime ? '<br>Latest on ' + item.startTime : '')
-                    + '</p>'
-                    + '<div class="additional-content-placeholder"></div>'
-                    + this.#getViewOnGoogleMapsLinks(item?.topCandidate_placeLocation_latLng, item?.topCandidate_placeId),
-                    {
-                        className: 'map-marker-popup',
-                    }
-                )
-                .addTo(this.#map);
-            });
-        }// endif;
+        this.#drawSummaryVisitedPlaces(summaryVisitedPlaces);
         // end display summary visited places. --------------------------
 
         this.#listenMapOverlayPathsTraveledSelected();

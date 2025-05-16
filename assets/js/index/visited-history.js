@@ -258,7 +258,7 @@ class VisitedHistory {
             }
             pagination += '"><a class="page-link pmtl-pagination-page-previous">Previous</a></li>';
             pagination += '<li class="page-item pmtl-page-item-next';
-            if ((this.#currentOffset + this.#itemsPerPage) > this.#totalItems) {
+            if ((this.#currentOffset + this.#itemsPerPage) >= this.#totalItems) {
                 pagination += ' disabled';
             }
             pagination += '"><a class="page-link pmtl-pagination-page-next">Next</a></li>';

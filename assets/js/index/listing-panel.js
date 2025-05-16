@@ -105,7 +105,7 @@ class ListingPanel {
          * @returns {undefined}
          */
         function resizePanel(event){
-            let dy;
+            let dy;// different on Y axis.
             if (typeof(event.touches) === 'object') {
                 const touch0 = event.touches[0];
                 dy = myPos - touch0.clientY;
@@ -116,10 +116,10 @@ class ListingPanel {
             }
             const currentPanelHeight = parseInt(getComputedStyle(panel, '').height);
             panel.style.height = parseInt(currentPanelHeight + dy) + "px";
-            // set the `data-` for easy debugging.
-            panel.dataset.myPos = myPos;
-            panel.dataset.dy = dy;
-            panel.dataset.currentPanelHeight = currentPanelHeight;
+            // set the `data-` attribute for easy debugging only.
+            panel.dataset.pmtlMyPos = myPos;
+            panel.dataset.pmtlDy = dy;
+            panel.dataset.pmtlCurrentPanelHeight = currentPanelHeight;
         }// resizePanel
 
         // listen on resize for mobile.

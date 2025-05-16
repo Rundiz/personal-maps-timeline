@@ -28,12 +28,15 @@ $navbarExpand = 'md';
                 <div id="navbarSupportedContent" class="collapse navbar-collapse">
                     <ul class="navbar-nav me-auto mb-2 mb-<?=$navbarExpand; ?>-0 navbar-nav-scroll">
                         <li class="nav-item">
-                            <a id="pmtl-open-timeline-panel" class="nav-link" title="Select a date"><i class="fa-solid fa-calendar"></i> <span class="d-<?=$navbarExpand; ?>-none">Select a date</span></a>
+                            <a id="pmtl-open-timeline-panel" class="nav-link" title="Select a date" aria-label="Select a date"><i class="fa-solid fa-calendar"></i> <span class="d-<?=$navbarExpand; ?>-none">Select a date</span></a>
+                        </li>
+                        <li class="nav-item">
+                            <a id="pmtl-open-search-panel" class="nav-link" title="Search" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i> <span class="d-<?=$navbarExpand; ?>-none">Search</span></a>
                         </li>
                     </ul>
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link" href="help.php" title="Help"><i class="fa-solid fa-circle-question"></i> <span class="d-<?=$navbarExpand; ?>-none">Help</span></a>
+                            <a class="nav-link" href="help.php" title="Help" aria-label="Help"><i class="fa-solid fa-circle-question"></i> <span class="d-<?=$navbarExpand; ?>-none">Help</span></a>
                         </li>
                     </ul>
                 </div>
@@ -94,6 +97,19 @@ $navbarExpand = 'md';
                 </div>
             </div>
         </template><!-- #pmtl-timeline-panel-template -->
+
+        <template id="pmtl-search-panel-template">
+            <div class="pmtl-search-panel-container container-fluid">
+                <form id="pmtl-search-panel-form" class="mb-3">
+                    <label class="visually-hidden" for="pmtl-search-input">Search keyword</label>
+                    <input id="pmtl-search-input" class="form-control" list="pmtl-search-datalist" type="search" name="keyword" placeholder="Search place name">
+                    <datalist id="pmtl-search-datalist"></datalist>
+                </form>
+                <div class="pmtl-search-panel-content-row row">
+                    <div id="pmtl-search-panel-content-placeholder"></div>
+                </div>
+            </div>
+        </template><!-- #pmtl-search-panel-template -->
 
         <template id="pmtl-dialog-visited-history-template">
             <form id="pmtl-visited-history-form" class="row gy-3 mb-3">
@@ -169,6 +185,7 @@ $customHTMLFoot = '<script src="' . $Assets->assetUrl('/assets/vendor/leaflet/le
 <script src="' . $Assets->assetUrl('assets/js/index/dialog-element.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index/listing-panel.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index/timeline-panel.js') . '"></script>
+<script src="' . $Assets->assetUrl('assets/js/index/search-panel.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index/visited-history.js') . '"></script>
 <script src="' . $Assets->assetUrl('assets/js/index.js') . '"></script>';
 include 'HTTP/common/html-foot.php';
