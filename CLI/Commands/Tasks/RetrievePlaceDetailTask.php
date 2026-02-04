@@ -107,7 +107,6 @@ class RetrievePlaceDetailTask
         if (curl_errno($ch)) {
             throw new \Exception('cURL Error: ' . curl_error($ch));
         }
-        curl_close($ch);
         unset($ch);
 
         $responseObj = json_decode($response);
